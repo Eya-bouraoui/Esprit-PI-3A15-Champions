@@ -1,1289 +1,1388 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Champions - Wallet Management{% endblock %}
+{% block title %}Champions — Wallet Management{% endblock %}
 
 {% block stylesheets %}
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-            --fiat-grad: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            --trading-grad: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            --crypto-grad: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            --sidebar-dark: #0f172a;
-            --bg-light: #f1f5f9;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  :root {
+    --bg-base:      #080d14;
+    --bg-card:      #0e1623;
+    --bg-card2:     #111b2b;
+    --border:       #1a2a40;
+    --border-glow:  rgba(0,229,255,.15);
+    --accent:       #00e5ff;
+    --accent2:      #00b4cc;
+    --accent-glow:  rgba(0,229,255,.18);
+    --gold:         #f0b429;
+    --gold-dim:     rgba(240,180,41,.10);
+    --green:        #00e676;
+    --green-dim:    rgba(0,230,118,.10);
+    --red:          #ff1744;
+    --red-dim:      rgba(255,23,68,.10);
+    --text-1:       #f0f4ff;
+    --text-2:       #f0f4ff;
+    --text-3:       #f0f4ff;
+    --font-head:    'Syne', sans-serif;
+    --font-body:    'Space Grotesk', sans-serif;
+    --font-mono:    'DM Mono', monospace;
+    --radius:       16px;
+  }
 
-        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-light); margin: 0; overflow-x: hidden; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
 
-        .sidebar {
-            width: 260px; background: var(--sidebar-dark); color: white;
-            display: flex; flex-direction: column; padding: 30px 20px;
-            position: fixed; left: 0; top: 0; height: 100vh; z-index: 1000;
-        }
-        .nav-btn {
-            display: flex; align-items: center; padding: 14px 18px; margin-bottom: 8px;
-            text-decoration: none; color: #94a3b8; border-radius: 12px; transition: 0.3s;
-        }
-        .nav-btn:hover { background: rgba(255,255,255,0.05); color: white; }
-        .nav-btn.active { background: var(--primary-gradient); color: white; box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3); }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg-base);
+    color: var(--text-1);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-        .main-content { margin-left: 260px; padding: 40px; width: calc(100% - 260px); min-height: 100vh; }
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.2); border-radius: 3px; }
 
-        .analytics-card {
-            background: white; border-radius: 24px; padding: 25px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 30px;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
+  /* ── BACKGROUND EFFECTS ── */
+  .bg-grid {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,.03) 1px, transparent 1px);
+    background-size: 52px 52px;
+    animation: gridDrift 25s linear infinite;
+  }
+  @keyframes gridDrift {
+    0%   { background-position: 0 0; }
+    100% { background-position: 52px 52px; }
+  }
+  .bg-orb {
+    position: fixed; border-radius: 50%; filter: blur(90px); pointer-events: none; z-index: 0;
+  }
+  .bg-orb-1 {
+    width: 600px; height: 600px; top: -200px; left: -150px;
+    background: radial-gradient(circle, rgba(0,229,255,.08) 0%, transparent 70%);
+    animation: orbFloat 10s ease-in-out infinite alternate;
+  }
+  .bg-orb-2 {
+    width: 440px; height: 440px; bottom: -160px; right: -100px;
+    background: radial-gradient(circle, rgba(240,180,41,.07) 0%, transparent 70%);
+    animation: orbFloat 14s ease-in-out infinite alternate-reverse;
+  }
+  @keyframes orbFloat {
+    from { transform: translate(0,0) scale(1); }
+    to   { transform: translate(28px,18px) scale(1.06); }
+  }
 
-        .wallet-column { background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px); border-radius: 24px; padding: 20px; border: 1px solid rgba(255,255,255,0.8); height: 100%; }
-        .column-header { font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; color: #1e293b; margin-bottom: 25px; padding-bottom: 10px; border-bottom: 2px solid rgba(0,0,0,0.05); }
+  /* ── LAYOUT ── */
+  .app-shell { display: flex; min-height: 100vh; position: relative; z-index: 1; }
 
-        .bank-card { background: white; border-radius: 20px; padding: 22px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); margin-bottom: 20px; position: relative; overflow: hidden; transition: all 0.3s ease; }
-        .card-type-indicator { position: absolute; top: 0; right: 0; width: 4px; height: 100%; }
-        .type-fiat { background: var(--fiat-grad); }
-        .type-trading { background: var(--trading-grad); }
-        .type-crypto { background: var(--crypto-grad); }
-
-        .card-rib { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: #1e293b; font-weight: 600; }
-        
-        .balance-item { 
-            background: #f8fafc; border-radius: 12px; padding: 8px 12px; margin-bottom: 6px; 
-            border: 1px solid #f1f5f9; position: relative; transition: all 0.3s ease; overflow: hidden;
-        }
-
-        .balance-item.is-empty:hover { background-color: #fee2e2 !important; border-color: #ef4444 !important; }
-
-        .delete-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(239, 68, 68, 0.9); color: white; display: flex;
-            align-items: center; justify-content: center; font-weight: 700;
-            font-size: 0.75rem; opacity: 0; transition: opacity 0.2s ease;
-            text-decoration: none; z-index: 10;
-        }
-        .balance-item.is-empty:hover .delete-overlay { opacity: 1; }
-
-        .btn-mini { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: none; transition: 0.2s; }
-        .btn-mini-edit { background: #eef2ff; color: #6366f1; }
-        .btn-mini-delete { background: #fff1f2; color: #f43f5e; }
-        .btn-mini-add { background: #ecfdf5; color: #10b981; }
-        .btn-mini-add:hover { background: #10b981; color: white; }
-
-        .form-control-custom { background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 12px; margin-bottom: 15px; width: 100%; }
-
-      /* ===== CARTE BANCAIRE ULTRA-RÉALISTE ===== */
-.credit-card-champions-pro {
-    width: 100%;
-    max-width: 420px;
-    height: 250px;
-    border-radius: 18px;
-    padding: 24px 28px;
-    position: relative;
-    color: white;
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 260px; flex-shrink: 0;
+    background: rgba(8,13,20,.97);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    position: fixed; left: 0; top: 0; height: 100vh;
+    z-index: 100;
+    backdrop-filter: blur(20px);
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    margin: 0 auto;
-    background: linear-gradient(135deg, #1a2744 0%, #0d1b3e 40%, #1a2744 70%, #0a1628 100%);
-    box-shadow:
-        0 2px 0 rgba(255,255,255,0.07) inset,
-        0 -1px 0 rgba(0,0,0,0.5) inset,
-        0 25px 60px rgba(0,0,0,0.6),
-        0 5px 15px rgba(0,0,0,0.4);
-    cursor: default;
-    user-select: none;
-    transform-style: preserve-3d;
-    transition: transform 0.1s ease;
-}
-
-/* Texture lignes horizontales plastique */
-.card-texture {
-    position: absolute;
-    inset: 0;
-    border-radius: 18px;
-    background-image: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(255,255,255,0.012) 2px,
-        rgba(255,255,255,0.012) 4px
-    );
-    pointer-events: none;
-    z-index: 0;
-}
-
-/* Hologramme dynamique (JS requis pour l'effet souris) */
-.card-holo {
-    position: absolute;
-    inset: 0;
-    border-radius: 18px;
-    background: radial-gradient(
-        ellipse at 50% 50%,
-        rgba(120,180,255,0.06) 0%,
-        rgba(255,120,200,0.05) 35%,
-        rgba(120,255,180,0.04) 60%,
-        transparent 80%
-    );
-    pointer-events: none;
-    z-index: 0;
-    transition: background 0.05s;
-}
-
-/* Dégradé sombre en bas */
-.card-bottom-band {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 35%;
-    background: linear-gradient(to top, rgba(0,0,0,0.3) 0%, transparent 100%);
-    border-radius: 0 0 18px 18px;
-    pointer-events: none;
-    z-index: 0;
-}
-
-/* Reflet brillant en haut */
-.card-gloss-effect {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 55%;
-    border-radius: 18px 18px 60% 60%;
-    background: linear-gradient(180deg, rgba(255,255,255,0.09) 0%, transparent 100%);
-    pointer-events: none;
-    z-index: 0;
-}
-
-/* Bordure lumineuse */
-.card-edge {
-    position: absolute;
-    inset: 0;
-    border-radius: 18px;
-    border: 1px solid rgba(255,255,255,0.13);
-    pointer-events: none;
-    z-index: 1;
-}
-
-/* Puce EMV dorée */
-.card-chip-pro {
-    width: 48px;
-    height: 36px;
-    background: linear-gradient(135deg, #e8c84a 0%, #c8a020 30%, #f0d870 55%, #b89010 80%, #e0bc3a 100%);
-    border-radius: 6px;
-    position: relative;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.5), 0 0 0 0.5px rgba(0,0,0,0.3) inset;
-    overflow: hidden;
-    flex-shrink: 0;
-}
-.card-chip-pro::before {
+  }
+  .sidebar::before {
     content: '';
-    position: absolute;
-    inset: 3px;
-    border: 1px solid rgba(0,0,0,0.2);
-    border-radius: 3px;
-}
-.chip-line-v {
-    position: absolute;
-    top: 3px; bottom: 3px;
-    left: 50%; transform: translateX(-50%);
-    width: 1px;
-    background: rgba(0,0,0,0.15);
-}
-.chip-line-h1 {
-    position: absolute;
-    top: 33%; left: 3px; right: 3px;
-    height: 1px;
-    background: rgba(0,0,0,0.15);
-}
-.chip-line-h2 {
-    position: absolute;
-    top: 60%; left: 3px; right: 3px;
-    height: 1px;
-    background: rgba(0,0,0,0.15);
-}
-.chip-shine {
-    position: absolute;
-    top: 2px; left: 3px; right: 3px;
-    height: 40%;
-    background: linear-gradient(180deg, rgba(255,255,255,0.35) 0%, transparent 100%);
-    border-radius: 3px 3px 0 0;
-}
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.4; z-index: 1;
+  }
 
-/* Icône NFC / sans contact */
-.contactless-icon {
-    display: flex;
-    align-items: center;
-    margin-left: 10px;
-}
-.nfc-arcs {
-    display: flex;
-    flex-direction: column;
-    gap: 2.5px;
-}
-.nfc-arc {
-    border: 1.5px solid rgba(255,255,255,0.55);
-    border-left: none;
-    border-top: none;
-    border-bottom: none;
-    border-radius: 0 50% 50% 0;
-    height: 6px;
-    width: 5px;
-}
-.nfc-arc:nth-child(2) { height: 10px; width: 8px; }
-.nfc-arc:nth-child(3) { height: 14px; width: 11px; }
+  /* Logo */
+  .sidebar-logo {
+    display: flex; align-items: center; gap: 10px;
+    padding: 22px 20px 20px;
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .logo-icon {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: linear-gradient(135deg, #1de9b6, #00b4cc);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 16px; color: #080d14;
+    font-family: var(--font-head);
+    box-shadow: 0 0 16px rgba(0,229,255,.3);
+    flex-shrink: 0;
+  }
+  .logo-text {
+    font-family: var(--font-head); font-size: 18px; font-weight: 700;
+    background: linear-gradient(90deg, var(--text-1), var(--accent));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
 
-/* Header haut */
-.card-header-pro {
-    display: flex;
-    align-items: center;
+  /* Scrollable nav body */
+  .sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 14px 12px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,229,255,.15) transparent;
+  }
+  .sidebar-nav::-webkit-scrollbar { width: 3px; }
+  .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(0,229,255,.15); border-radius: 2px; }
+
+  .nav-section-label {
+    font-size: 10.5px; font-weight: 700; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--text-3);
+    padding: 0 10px; margin-bottom: 5px; margin-top: 8px;
+  }
+  .nav-btn {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 10px; margin-bottom: 2px;
+    text-decoration: none; color: var(--text-1);
+    font-size: 14.5px; font-weight: 500;
+    transition: all .2s ease; position: relative;
+    white-space: nowrap; width: 100%;
+    background: none; border: none; cursor: pointer; font-family: var(--font-body);
+    text-align: left;
+  }
+  .nav-btn i { font-size: 14px; width: 18px; text-align: center; flex-shrink: 0; }
+  .nav-btn:hover { color: var(--text-1); background: rgba(255,255,255,.04); }
+  .nav-btn.active {
+    color: var(--accent);
+    background: rgba(0,229,255,.08);
+    border: 1px solid rgba(0,229,255,.15);
+  }
+  .nav-btn.active i { color: var(--accent); }
+  .nav-btn .nav-badge {
+    margin-left: auto; padding: 2px 8px; border-radius: 20px;
+    background: rgba(0,229,255,.12); color: var(--accent);
+    font-size: 11px; font-weight: 700; font-family: var(--font-mono);
+    flex-shrink: 0;
+  }
+  .nav-btn.danger { color: var(--red); }
+  .nav-btn.danger:hover { background: rgba(255,23,68,.08); color: var(--red); }
+
+  .sidebar-divider { height: 1px; background: var(--border); margin: 8px 6px; }
+
+  /* Fixed bottom user card */
+  .sidebar-bottom {
+    flex-shrink: 0;
+    padding: 10px 12px 14px;
+    border-top: 1px solid var(--border);
+    background: rgba(8,13,20,.97);
+  }
+  .user-card {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 12px; border-radius: 12px;
+    background: rgba(255,255,255,.03); border: 1px solid var(--border);
+    cursor: pointer; transition: border-color .2s; margin-top: 6px;
+  }
+  .user-card:hover { border-color: rgba(0,229,255,.2); }
+  .user-avatar {
+    width: 32px; height: 32px; border-radius: 9px;
+    background: linear-gradient(135deg, rgba(0,229,255,.2), rgba(0,180,204,.2));
+    border: 1px solid rgba(0,229,255,.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: var(--accent); flex-shrink: 0;
+  }
+  .user-info { flex: 1; min-width: 0; }
+  .user-name { font-size: 14px; font-weight: 600; color: var(--text-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user-role { font-size: 11.5px; color: var(--text-3); font-family: var(--font-mono); }
+
+  /* ── MAIN CONTENT ── */
+  .main-content {
+    margin-left: 260px;
+    flex: 1; min-height: 100vh;
+    padding: 32px 40px 80px;
+    display: flex; flex-direction: column; gap: 28px;
+  }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 20px;
+    flex-wrap: wrap;
+  }
+  .page-label {
+    font-size: 12px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 6px;
+  }
+  .page-title {
+    font-family: var(--font-head); font-size: 32px; font-weight: 800;
+    line-height: 1.1; letter-spacing: -.02em; margin-bottom: 6px;
+  }
+  .page-sub { font-size: 15px; color: var(--text-2); }
+  .header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+  /* ── BUTTONS ── */
+  .btn-primary-head {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 22px; border-radius: 10px; font-size: 15px; font-weight: 600;
+    font-family: var(--font-body);
+    background: var(--accent); color: #080d14; border: none;
+    cursor: pointer; transition: opacity .2s, transform .15s;
+    text-decoration: none; white-space: nowrap;
+  }
+  .btn-primary-head:hover { opacity: .88; transform: translateY(-1px); }
+  .btn-outline-head {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 20px; border-radius: 10px; font-size: 15px; font-weight: 600;
+    font-family: var(--font-body);
+    background: transparent; color: var(--text-1);
+    border: 1px solid var(--border); cursor: pointer;
+    transition: border-color .2s, background .2s;
+    text-decoration: none; white-space: nowrap;
+  }
+  .btn-outline-head:hover { border-color: var(--accent); background: rgba(0,229,255,.06); color: var(--accent); }
+  .btn-ghost-head {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 16px; border-radius: 9px; font-size: 15px; font-weight: 500;
+    font-family: var(--font-body);
+    background: transparent; color: var(--text-2); border: 1px solid var(--border);
+    cursor: pointer; transition: all .2s; text-decoration: none;
+  }
+  .btn-ghost-head:hover { color: var(--text-1); background: rgba(255,255,255,.04); }
+
+  /* ── FLASH MESSAGES ── */
+  .flash-msg {
+    padding: 14px 18px; border-radius: 12px; font-size: 15px; font-weight: 500;
+    display: flex; align-items: center; gap: 10px;
+    animation: fadeSlide .3s ease both;
+  }
+  @keyframes fadeSlide { from { opacity:0; transform: translateY(-6px); } to { opacity:1; transform: translateY(0); } }
+  .flash-msg.success { background: rgba(0,230,118,.1); border: 1px solid rgba(0,230,118,.25); color: var(--green); }
+  .flash-msg.error   { background: rgba(255,23,68,.1);  border: 1px solid rgba(255,23,68,.25);  color: var(--red); }
+  .flash-close { margin-left: auto; cursor: pointer; opacity: .6; font-size: 16px; background: none; border: none; color: inherit; }
+
+  /* ── STATS ROW ── */
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 22px 24px;
+    position: relative; overflow: hidden;
+    transition: border-color .25s, transform .2s;
+  }
+  .stat-card:hover { border-color: rgba(0,229,255,.2); transform: translateY(-1px); }
+  .stat-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  .stat-card.cyan::before  { background: linear-gradient(90deg, var(--accent), transparent); }
+  .stat-card.gold::before  { background: linear-gradient(90deg, var(--gold), transparent); }
+  .stat-card.green::before { background: linear-gradient(90deg, var(--green), transparent); }
+  .stat-card.red::before   { background: linear-gradient(90deg, var(--red), transparent); }
+  .stat-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; margin-bottom: 14px;
+  }
+  .stat-icon.cyan  { background: rgba(0,229,255,.1);  color: var(--accent); }
+  .stat-icon.gold  { background: rgba(240,180,41,.1); color: var(--gold); }
+  .stat-icon.green { background: rgba(0,230,118,.1);  color: var(--green); }
+  .stat-icon.red   { background: rgba(255,23,68,.1);  color: var(--red); }
+  .stat-label { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); margin-bottom: 6px; }
+  .stat-value { font-family: var(--font-head); font-size: 28px; font-weight: 700; color: var(--text-1); }
+
+  /* ── CHART CARD ── */
+  .chart-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px;
+    position: relative; overflow: hidden;
+  }
+  .chart-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), var(--gold), transparent);
+    opacity: 0.4;
+  }
+  .card-header-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .card-label-top {
+    font-size: 11px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 4px;
+  }
+  .card-title-text {
+    font-family: var(--font-head); font-size: 20px; font-weight: 700; color: var(--text-1);
+  }
+  .chart-layout { display: flex; align-items: center; gap: 36px; }
+  .chart-wrap { flex-shrink: 0; width: 200px; height: 200px; position: relative; }
+  .chart-center-label {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    pointer-events: none;
+  }
+  .chart-center-label .cl-num {
+    font-family: var(--font-head); font-size: 22px; font-weight: 700; color: var(--text-1);
+  }
+  .chart-center-label .cl-sub { font-size: 13px; color: var(--text-3); margin-top: 2px; }
+  .legend-grid { display: flex; flex-wrap: wrap; gap: 12px; flex: 1; }
+  .legend-item {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,.03); border: 1px solid var(--border);
+    border-radius: 9px; padding: 9px 14px; min-width: 130px;
+  }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .legend-name { font-size: 13.5px; font-weight: 600; color: var(--text-1); }
+  .legend-val  { font-size: 12px; color: var(--text-3); font-family: var(--font-mono); margin-top: 1px; }
+
+  /* ── WALLET COLUMNS ── */
+  .wallets-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .wallet-column {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .wallet-col-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 18px 22px 16px;
+    border-bottom: 1px solid var(--border);
     position: relative;
-    z-index: 2;
-}
+  }
+  .wallet-col-header::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+  }
+  .col-fiat    .wallet-col-header::after { background: linear-gradient(90deg, #3b82f6, transparent); }
+  .col-trading .wallet-col-header::after { background: linear-gradient(90deg, var(--green), transparent); }
+  .col-crypto  .wallet-col-header::after { background: linear-gradient(90deg, var(--gold), transparent); }
+  .col-icon {
+    width: 32px; height: 32px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center; font-size: 14px;
+  }
+  .col-fiat    .col-icon { background: rgba(59,130,246,.15); color: #3b82f6; }
+  .col-trading .col-icon { background: rgba(0,230,118,.1);  color: var(--green); }
+  .col-crypto  .col-icon { background: rgba(240,180,41,.1); color: var(--gold); }
+  .col-title { font-family: var(--font-head); font-size: 16px; font-weight: 700; }
+  .col-fiat    .col-title { color: #3b82f6; }
+  .col-trading .col-title { color: var(--green); }
+  .col-crypto  .col-title { color: var(--gold); }
+  .col-count {
+    margin-left: auto; font-size: 12px; font-family: var(--font-mono);
+    color: var(--text-3); background: rgba(255,255,255,.04);
+    padding: 3px 9px; border-radius: 20px; border: 1px solid var(--border);
+  }
+  .wallet-col-body { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
 
-/* Numéro de carte */
-.card-number-pro {
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 1.42rem;
-    letter-spacing: 2.5px;
-    display: flex;
-    gap: 14px;
+  /* ── WALLET CARD ── */
+  .wallet-card {
+    background: var(--bg-card2);
+    border: 1px solid var(--border);
+    border-radius: 14px; padding: 18px;
+    position: relative; overflow: hidden;
+    transition: border-color .25s, transform .2s;
+  }
+  .wallet-card:hover { border-color: rgba(0,229,255,.15); transform: translateY(-1px); }
+  .wallet-card::before {
+    content: ''; position: absolute; top: 0; right: 0; bottom: 0; width: 3px;
+    border-radius: 0 14px 14px 0;
+  }
+  .col-fiat    .wallet-card::before { background: linear-gradient(180deg, #3b82f6, #2563eb); }
+  .col-trading .wallet-card::before { background: linear-gradient(180deg, var(--green), #059669); }
+  .col-crypto  .wallet-card::before { background: linear-gradient(180deg, var(--gold), #d97706); }
+
+  .wallet-card-top {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .rib-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text-3); margin-bottom: 4px; }
+  .rib-value { font-family: var(--font-mono); font-size: 14.5px; font-weight: 600; color: var(--text-1); }
+  .status-badge {
+    padding: 4px 11px; border-radius: 20px; font-size: 11px; font-weight: 700;
+    font-family: var(--font-mono); letter-spacing: .06em;
+  }
+  .status-badge.actif  { background: rgba(0,230,118,.12); color: var(--green); border: 1px solid rgba(0,230,118,.2); }
+  .status-badge.bloque { background: rgba(255,23,68,.12);  color: var(--red);   border: 1px solid rgba(255,23,68,.2); }
+
+  /* ── BALANCES ── */
+  .balances-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .balance-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 12px; border-radius: 9px;
+    background: rgba(0,0,0,.2); border: 1px solid rgba(26,42,64,.6);
+    font-size: 14px; position: relative; overflow: hidden;
+    transition: all .2s ease;
+  }
+  .balance-row.empty:hover { background: rgba(255,23,68,.08); border-color: rgba(255,23,68,.2); }
+  .balance-currency { color: var(--text-2); font-weight: 500; }
+  .balance-amount   { font-weight: 600; color: var(--text-1); font-family: var(--font-mono); }
+  .balance-amount.zero { color: var(--text-3); }
+  .delete-hover {
+    position: absolute; inset: 0;
+    background: rgba(255,23,68,.85); color: white;
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; font-size: 12.5px; font-weight: 700;
+    opacity: 0; transition: opacity .2s; text-decoration: none;
+  }
+  .balance-row.empty:hover .delete-hover { opacity: 1; }
+  .no-assets {
+    text-align: center; padding: 12px; border-radius: 9px;
+    background: rgba(0,0,0,.15); border: 1px dashed rgba(26,42,64,.8);
+    font-size: 13.5px; color: var(--text-3);
+  }
+
+  /* ── ACTION BUTTONS ── */
+  .card-actions { display: flex; align-items: center; gap: 6px; }
+  .act-btn {
+    width: 32px; height: 32px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; cursor: pointer; border: 1px solid var(--border);
+    background: rgba(255,255,255,.03); color: var(--text-2);
+    transition: all .2s; text-decoration: none;
+  }
+  .act-btn:hover        { color: var(--text-1); border-color: rgba(0,229,255,.2); background: rgba(0,229,255,.06); }
+  .act-btn.add:hover    { color: var(--green); border-color: rgba(0,230,118,.25); background: rgba(0,230,118,.08); }
+  .act-btn.history:hover{ color: var(--accent); border-color: rgba(0,229,255,.25); background: rgba(0,229,255,.08); }
+  .act-btn.edit:hover   { color: var(--gold); border-color: rgba(240,180,41,.25); background: rgba(240,180,41,.08); }
+  .act-btn.del:hover    { color: var(--red);  border-color: rgba(255,23,68,.25);  background: rgba(255,23,68,.08); }
+  .act-btn.recharge:hover { color: var(--accent); border-color: rgba(0,229,255,.25); background: rgba(0,229,255,.08); }
+  .act-btn.del[disabled]  { opacity: .3; cursor: not-allowed; pointer-events: none; }
+
+  /* ── MODALS ── */
+  .modal-backdrop-custom {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(4,8,16,.85); backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px; animation: fadeIn .2s ease both;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal-box {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 22px; width: 100%; max-width: 460px;
+    position: relative; overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0,0,0,.7);
+    animation: modalIn .3s cubic-bezier(.22,1,.36,1) both;
+  }
+  .modal-box.lg { max-width: 640px; }
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(16px) scale(.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .modal-box::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), var(--gold), transparent);
+    opacity: 0.5;
+  }
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 28px 20px; border-bottom: 1px solid var(--border);
+  }
+  .modal-title {
+    font-family: var(--font-head); font-size: 20px; font-weight: 700;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .modal-title-icon {
+    width: 32px; height: 32px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center; font-size: 14px;
+  }
+  .modal-close {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: rgba(255,255,255,.05); border: 1px solid var(--border);
+    color: var(--text-2); cursor: pointer; font-size: 14px;
+    display: flex; align-items: center; justify-content: center; transition: all .2s;
+  }
+  .modal-close:hover { background: rgba(255,23,68,.1); border-color: rgba(255,23,68,.25); color: var(--red); }
+  .modal-body { padding: 24px 28px 28px; }
+
+  /* ── FORM ELEMENTS ── */
+  .field { margin-bottom: 18px; }
+  .f-label {
+    display: block; font-size: 12px; font-weight: 700; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--text-3); margin-bottom: 7px;
+  }
+  .f-input, .f-select {
+    width: 100%; padding: 12px 15px;
+    background: rgba(0,0,0,.25);
+    border: 1px solid rgba(90,112,144,.3);
+    border-radius: 10px; color: var(--text-1);
+    font-size: 15px; font-family: var(--font-body); outline: none;
+    transition: border-color .2s, box-shadow .2s;
+    -webkit-appearance: none;
+  }
+  .f-input:focus, .f-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,229,255,.1);
+  }
+  .f-select option { background: #111b2b; }
+  .f-input[disabled], .f-input[readonly] { opacity: .5; cursor: not-allowed; }
+  .modal-btn-primary {
+    width: 100%; padding: 14px;
+    background: linear-gradient(135deg, var(--accent) 0%, #0099cc 100%);
+    border: none; border-radius: 11px; color: #080d14;
+    font-family: var(--font-head); font-weight: 700; font-size: 15px;
+    letter-spacing: .04em; cursor: pointer;
+    transition: transform .2s, box-shadow .2s;
+    box-shadow: 0 8px 24px rgba(0,229,255,.2); margin-top: 8px;
+  }
+  .modal-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 12px 30px rgba(0,229,255,.3); }
+  .modal-btn-secondary {
+    width: 100%; padding: 13px; margin-top: 8px;
+    background: transparent; border: 1px solid var(--border);
+    border-radius: 11px; color: var(--text-2);
+    font-family: var(--font-body); font-weight: 600; font-size: 15px;
+    cursor: pointer; transition: all .2s;
+  }
+  .modal-btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── HISTORY TABLE ── */
+  .history-table { width: 100%; border-collapse: collapse; }
+  .history-table th {
+    text-align: left; padding: 11px 14px;
+    font-size: 11px; font-weight: 700; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--text-3);
+    border-bottom: 1px solid var(--border);
+  }
+  .history-table th:last-child { text-align: right; }
+  .history-table td { padding: 14px 14px; border-bottom: 1px solid rgba(26,42,64,.4); font-size: 14px; }
+  .history-table td:last-child { text-align: right; }
+  .history-table tr:last-child td { border-bottom: none; }
+  .history-table tr:hover td { background: rgba(0,229,255,.025); }
+  .tx-type {
+    display: inline-block; padding: 3px 10px; border-radius: 6px;
+    font-size: 11px; font-weight: 700; letter-spacing: .06em;
+    font-family: var(--font-mono); text-transform: uppercase;
+    background: rgba(0,229,255,.08); color: var(--accent);
+    border: 1px solid rgba(0,229,255,.12);
+  }
+  .tx-amount.up { color: var(--green); font-weight: 700; font-family: var(--font-mono); }
+  .tx-amount.dn { color: var(--red);   font-weight: 700; font-family: var(--font-mono); }
+  .tx-date    { color: var(--text-3); font-family: var(--font-mono); font-size: 13px; }
+  .tx-counter { color: var(--text-2); font-size: 13px; }
+  .history-rib {
+    font-family: var(--font-mono); font-size: 13px; color: var(--text-3);
+    background: rgba(0,0,0,.2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 9px 13px; margin-bottom: 18px;
+  }
+  .spinner {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 2px solid transparent;
+    border-top-color: var(--accent); border-right-color: var(--gold);
+    animation: spin 1s linear infinite; margin: 24px auto;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── EMPTY STATE ── */
+  .empty-col {
+    text-align: center; padding: 28px 16px;
+    border: 1px dashed rgba(26,42,64,.8);
+    border-radius: 12px; color: var(--text-3); font-size: 14px;
+  }
+  .empty-col i { font-size: 26px; margin-bottom: 8px; opacity: .4; display: block; }
+
+  /* ── TICKER ── */
+  .ticker-wrap {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 90;
+    background: rgba(8,13,20,.95); border-top: 1px solid var(--border);
+    height: 38px; overflow: hidden; backdrop-filter: blur(12px);
+  }
+  .ticker-track {
+    display: flex; align-items: center; height: 100%;
     white-space: nowrap;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.8), 0 0 1px rgba(255,255,255,0.1);
-    color: rgba(255,255,255,0.92);
-    position: relative;
-    z-index: 2;
-}
+    animation: tickerScroll 35s linear infinite;
+    width: max-content;
+  }
+  .ticker-item {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 0 28px; font-size: 13px; font-family: var(--font-mono); color: var(--text-2);
+    border-right: 1px solid var(--border);
+  }
+  .ticker-item .sym { color: var(--accent); font-weight: 600; }
+  .ticker-item .up  { color: var(--green); }
+  .ticker-item .dn  { color: var(--red); }
+  @keyframes tickerScroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
 
-/* Footer bas */
-.card-footer-pro {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    position: relative;
-    z-index: 2;
-}
+  /* ── CREDIT CARD ── */
+  .credit-card-champions-pro {
+    width: 100%; max-width: 420px; height: 250px;
+    border-radius: 18px; padding: 24px 28px;
+    position: relative; color: white; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: space-between;
+    margin: 0 auto;
+    background: linear-gradient(135deg, #0e2038 0%, #0a1628 40%, #0d1d35 70%, #061020 100%);
+    box-shadow: 0 2px 0 rgba(0,229,255,.08) inset, 0 25px 60px rgba(0,0,0,.6);
+    cursor: default; user-select: none;
+  }
+  .card-texture {
+    position: absolute; inset: 0; border-radius: 18px;
+    background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,229,255,.008) 2px, rgba(0,229,255,.008) 4px);
+    pointer-events: none; z-index: 0;
+  }
+  .card-holo {
+    position: absolute; inset: 0; border-radius: 18px;
+    background: radial-gradient(ellipse at 50% 50%, rgba(0,229,255,.06) 0%, rgba(240,180,41,.04) 35%, transparent 80%);
+    pointer-events: none; z-index: 0;
+  }
+  .card-bottom-band {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 35%;
+    background: linear-gradient(to top, rgba(0,0,0,.3) 0%, transparent 100%);
+    border-radius: 0 0 18px 18px; pointer-events: none; z-index: 0;
+  }
+  .card-gloss-effect {
+    position: absolute; top: 0; left: 0; right: 0; height: 55%;
+    border-radius: 18px 18px 60% 60%;
+    background: linear-gradient(180deg, rgba(0,229,255,.07) 0%, transparent 100%);
+    pointer-events: none; z-index: 0;
+  }
+  .card-edge {
+    position: absolute; inset: 0; border-radius: 18px;
+    border: 1px solid rgba(0,229,255,.15); pointer-events: none; z-index: 1;
+  }
+  .card-chip-pro {
+    width: 48px; height: 36px;
+    background: linear-gradient(135deg, #e8c84a 0%, #c8a020 30%, #f0d870 55%, #b89010 80%, #e0bc3a 100%);
+    border-radius: 6px; position: relative;
+    box-shadow: 0 1px 3px rgba(0,0,0,.5); overflow: hidden; flex-shrink: 0;
+  }
+  .card-chip-pro::before { content: ''; position: absolute; inset: 3px; border: 1px solid rgba(0,0,0,.2); border-radius: 3px; }
+  .chip-line-v  { position: absolute; top: 3px; bottom: 3px; left: 50%; transform: translateX(-50%); width: 1px; background: rgba(0,0,0,.15); }
+  .chip-line-h1 { position: absolute; top: 33%; left: 3px; right: 3px; height: 1px; background: rgba(0,0,0,.15); }
+  .chip-line-h2 { position: absolute; top: 60%; left: 3px; right: 3px; height: 1px; background: rgba(0,0,0,.15); }
+  .chip-shine   { position: absolute; top: 2px; left: 3px; right: 3px; height: 40%; background: linear-gradient(180deg, rgba(255,255,255,.35) 0%, transparent 100%); border-radius: 3px 3px 0 0; }
+  .contactless-icon { display: flex; align-items: center; margin-left: 10px; }
+  .nfc-arcs { display: flex; flex-direction: column; gap: 2.5px; }
+  .nfc-arc { border: 1.5px solid rgba(255,255,255,.55); border-left: none; border-top: none; border-bottom: none; border-radius: 0 50% 50% 0; height: 6px; width: 5px; }
+  .nfc-arc:nth-child(2) { height: 10px; width: 8px; }
+  .nfc-arc:nth-child(3) { height: 14px; width: 11px; }
+  .card-header-pro { display: flex; align-items: center; position: relative; z-index: 2; }
+  .card-number-pro {
+    font-family: var(--font-mono); font-size: 1.42rem; letter-spacing: 2.5px;
+    display: flex; gap: 14px; color: rgba(255,255,255,.92); position: relative; z-index: 2;
+  }
+  .card-footer-pro { display: flex; justify-content: space-between; align-items: flex-end; position: relative; z-index: 2; }
+  .card-label-small { font-size: 0.58rem; color: rgba(255,255,255,.45); letter-spacing: 1.5px; text-transform: uppercase; display: block; margin-bottom: 3px; }
+  .card-value { font-size: 0.92rem; font-weight: 600; letter-spacing: 1px; color: rgba(255,255,255,.92); }
+  .card-footer-right { display: flex; align-items: flex-end; gap: 22px; }
+  .card-brand-pro { display: flex; flex-direction: column; align-items: flex-end; }
+  .visa-text { font-family: "Arial Black", Impact, sans-serif; font-size: 1.9rem; font-style: italic; font-weight: 900; color: white; line-height: 1; letter-spacing: -1px; text-shadow: 0 0 12px rgba(0,229,255,.4); }
+  .visa-decorator { height: 2.5px; width: 110%; background: linear-gradient(90deg, var(--accent), var(--gold)); margin-top: -3px; border-radius: 2px; box-shadow: 0 0 4px rgba(0,229,255,.5); }
 
-.card-label {
-    font-size: 0.58rem;
-    color: rgba(255,255,255,0.45);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    display: block;
-    margin-bottom: 3px;
-}
-
-.card-value {
-    font-size: 0.92rem;
-    font-weight: 600;
-    letter-spacing: 1px;
-    color: rgba(255,255,255,0.92);
-    text-shadow: 0 1px 2px rgba(0,0,0,0.6);
-}
-
-.card-footer-right {
-    display: flex;
-    align-items: flex-end;
-    gap: 22px;
-}
-
-/* Logo VISA */
-.card-brand-pro {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-.visa-text {
-    font-family: "Arial Black", Impact, sans-serif;
-    font-size: 1.9rem;
-    font-style: italic;
-    font-weight: 900;
-    color: white;
-    line-height: 1;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-    letter-spacing: -1px;
-}
-.visa-decorator {
-    height: 2.5px;
-    width: 110%;
-    background: linear-gradient(90deg, #f59e0b, #fbbf24);
-    margin-top: -3px;
-    border-radius: 2px;
-    box-shadow: 0 0 4px rgba(245,158,11,0.5);
-}
-.card-actions-container {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 25px;
-}
-
-.btn-card-action {
-    padding: 10px 20px;
-    border-radius: 12px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    border: none;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.btn-card-edit {
-    background: rgba(99, 102, 241, 0.1);
-    color: #6366f1;
-}
-
-.btn-card-edit:hover {
-    background: #6366f1;
-    color: white;
-}
-
-.btn-card-delete {
-    background: rgba(244, 63, 94, 0.1);
-    color: #f43f5e;
-}
-
-.btn-card-delete:hover {
-    background: #f43f5e;
-    color: white;
-}
-    </style>
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1200px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .wallets-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main-content { margin-left: 0; padding: 20px 20px 80px; }
+    .wallets-grid { grid-template-columns: 1fr; }
+    .chart-layout { flex-direction: column; }
+  }
+  @media (max-width: 600px) {
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .header-actions { flex-direction: column; align-items: stretch; }
+  }
+</style>
 {% endblock %}
 
-{% macro render_wallet(wallet, typeClass) %}
-    <div class="bank-card">
-        <div class="card-type-indicator {{ typeClass }}"></div>
-        <div class="d-flex justify-content-between align-items-start mb-3">
-            <div>
-                <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Account Number</small>
-                <div class="card-rib">{{ wallet.rib }}</div>
-            </div>
-            <span class="badge {{ wallet.statut == 'actif' ? 'bg-success' : 'bg-danger' }} rounded-pill" style="font-size: 0.6rem; padding: 5px 10px;">
-                {{ wallet.statut|upper }}
-            </span>
-        </div>
-        
-        <div class="mb-3">
-            {% for wc in wallet.walletCurrencys %}
-                {% set isEmpty = (wc.solde == 0) %}
-                <div class="balance-item d-flex justify-content-between align-items-center {{ isEmpty ? 'is-empty' : '' }}">
-                    <span class="text-muted small fw-medium">{{ wc.nomCurrency }}</span>
-                    <span class="fw-bold text-dark">{{ wc.solde|number_format(2) }}</span>
-                    
-                    {% if isEmpty %}
-                        <a href="{{ path('app_wallet_currency_delete', {'id': wc.idWalletCurrency}) }}" 
-                           class="delete-overlay"
-                           onclick="return confirm('Remove {{ wc.nomCurrency }} from your wallet?')">
-                             <i class="fas fa-trash me-1"></i> DELETE
-                        </a>
-                    {% endif %}
-                </div>
-            {% else %}
-                <div class="text-center py-2 bg-light rounded-3">
-                    <small class="text-muted italic">No assets configured</small>
-                </div>
-            {% endfor %}
-        </div>
-
-        <div class="btn-action-group d-flex gap-2">
-            {# --- BOUTON RECHARGE STRIPE (Uniquement pour Fiat) --- #}
-            {% if wallet.typeWallet|lower == 'fiat' %}
-                <button class="btn-mini" 
-                        style="background: #e0f7fa; color: #00acc1;" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#rechargeModal" 
-                        onclick="document.getElementById('recharge_wallet_id').value = '{{ wallet.idWallet }}'"
-                        title="Recharge with Stripe">
-                    <i class="fas fa-bolt"></i>
-                </button>
-            {% endif %}
-
-            <button class="btn-mini btn-mini-add" data-bs-toggle="modal" data-bs-target="#addCurrencyModal"
-                    data-id="{{ wallet.idWallet }}" data-type="{{ wallet.typeWallet|lower }}">
-                <i class="fas fa-plus"></i>
-            </button>
-
-            <button class="btn-mini btn-mini-edit bg-info-subtle text-info btn-history" 
-                    data-bs-toggle="modal" data-bs-target="#historyModal"
-                    data-id="{{ wallet.idWallet }}" data-rib="{{ wallet.rib }}">
-                <i class="fas fa-history"></i>
-            </button>
-
-            <button class="btn-mini btn-mini-edit" data-bs-toggle="modal" data-bs-target="#editModal"
-                    data-id="{{ wallet.idWallet }}" data-type="{{ wallet.typeWallet }}" data-statut="{{ wallet.statut }}">
-                <i class="fas fa-pen"></i>
-            </button>
-
-            <form method="post" action="{{ path('app_wallet_delete', {'id': wallet.idWallet}) }}" class="m-0" onsubmit="return confirm('Are you sure?');">
-                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ wallet.idWallet) }}">
-                <button type="submit" class="btn-mini btn-mini-delete" {% if wallet.walletCurrencys is not empty %}disabled style="opacity:0.3; cursor:not-allowed;"{% endif %}>
-                    <i class="fas fa-trash"></i>
-                </button>
-            </form>
-        </div>
+{% macro render_wallet(wallet, colClass) %}
+  <div class="wallet-card">
+    <div class="wallet-card-top">
+      <div>
+        <div class="rib-label">Account Number</div>
+        <div class="rib-value">{{ wallet.rib }}</div>
+      </div>
+      <span class="status-badge {{ wallet.statut }}">{{ wallet.statut|upper }}</span>
     </div>
+
+    <div class="balances-list">
+      {% for wc in wallet.walletCurrencys %}
+        {% set isEmpty = (wc.solde == 0) %}
+        <div class="balance-row {{ isEmpty ? 'empty' : '' }}">
+          <span class="balance-currency">{{ wc.nomCurrency }}</span>
+          <span class="balance-amount {{ isEmpty ? 'zero' : '' }}">{{ wc.solde|number_format(2) }}</span>
+          {% if isEmpty %}
+            <a href="{{ path('app_wallet_currency_delete', {'id': wc.idWalletCurrency}) }}"
+               class="delete-hover"
+               onclick="return confirm('Remove {{ wc.nomCurrency }} from wallet?')">
+              <i class="fas fa-trash"></i> DELETE
+            </a>
+          {% endif %}
+        </div>
+      {% else %}
+        <div class="no-assets">No assets configured</div>
+      {% endfor %}
+    </div>
+
+    <div class="card-actions">
+      {% if wallet.typeWallet|lower == 'fiat' %}
+        <button class="act-btn recharge"
+                onclick="document.getElementById('recharge_wallet_id').value='{{ wallet.idWallet }}'; openModal('rechargeModal')"
+                title="Recharge">
+          <i class="fas fa-bolt"></i>
+        </button>
+      {% endif %}
+      <button class="act-btn add"
+              onclick='openModal("addCurrencyModal"); setAddCurrencyWallet("{{ wallet.idWallet }}", "{{ wallet.typeWallet|lower }}")'
+              title="Add asset">
+        <i class="fas fa-plus"></i>
+      </button>
+      <button class="act-btn history"
+              onclick='openModal("historyModal"); loadHistory("{{ wallet.idWallet }}", "{{ wallet.rib }}")'
+              title="Transaction history">
+        <i class="fas fa-history"></i>
+      </button>
+      <button class="act-btn edit"
+              onclick='openModal("editModal"); setEditWallet("{{ wallet.idWallet }}", "{{ wallet.typeWallet }}", "{{ wallet.statut }}")'
+              title="Edit">
+        <i class="fas fa-pen"></i>
+      </button>
+      <form method="post" action="{{ path('app_wallet_delete', {'id': wallet.idWallet}) }}" style="margin:0"
+            onsubmit="return confirm('Delete this wallet?')">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ wallet.idWallet) }}">
+        <button type="submit" class="act-btn del" title="Delete"
+                {{ wallet.walletCurrencys is not empty ? 'disabled' : '' }}>
+          <i class="fas fa-trash"></i>
+        </button>
+      </form>
+    </div>
+  </div>
 {% endmacro %}
 
 {% block body %}
 {% import _self as ui %}
 
-<div class="d-flex">
-    <aside class="sidebar">
-        <h2 class="text-white mb-4">CHAMPIONS</h2>
-        <nav>
-            <a href="#" class="nav-btn"><i class="fas fa-th-large me-2"></i> Dashboard</a>
-            <a href="#" class="nav-btn"><i class="fas fa-shield-alt me-2"></i> Security</a>
-            <a href="{{ path('app_wallet_index') }}" class="nav-btn active"><i class="fas fa-wallet me-2"></i> My Wallets</a>
-            <a href="{{ path('app_trading_') }}" class="nav-btn"><i class="fas fa-chart-line me-2"></i> Trades</a>
-            <a href="#" class="nav-btn"><i class="fas fa-graduation-cap me-2"></i> Training</a>
-            <a href="#" class="nav-btn"><i class="fas fa-shopping-cart me-2"></i> Marketplace</a>
-            <a href="#" class="nav-btn"><i class="fas fa-hand-holding-usd me-2"></i> Credit</a>
-            <a href="#" class="nav-btn"><i class="fas fa-cog me-2"></i> Settings</a>
-        </nav>
-        <a href="#" class="nav-btn sign-out mt-auto"><i class="fas fa-sign-out-alt me-2"></i> Sign Out</a>
-    </aside>
+<div class="bg-grid"></div>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
 
-   <main class="main-content">
-    {# --- SECTION FLASH --- #}
+<div class="app-shell">
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="sidebar">
+    <a class="sidebar-logo" href="#">
+      <div class="logo-icon">C</div>
+      <div class="logo-text">Champions</div>
+    </a>
+
+    <div class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a href="#" class="nav-btn"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a href="{{ path('app_wallet_index') }}" class="nav-btn active">
+        <i class="fas fa-wallet"></i> My Wallets
+        <span class="nav-badge">{{ wallets|length }}</span>
+      </a>
+      <a href="#" class="nav-btn"><i class="fas fa-chart-line"></i> Trades</a>
+      <a href="#" class="nav-btn"><i class="fas fa-shopping-cart"></i> Marketplace</a>
+      <a href="#" class="nav-btn"><i class="fas fa-hand-holding-usd"></i> Credit</a>
+      <a href="#" class="nav-btn"><i class="fas fa-graduation-cap"></i> Training</a>
+
+      <div class="sidebar-divider"></div>
+
+      <div class="nav-section-label">Tools</div>
+      <button class="nav-btn" onclick="openModal('transactionModal')">
+        <i class="fas fa-exchange-alt"></i> Transfer
+      </button>
+      <button class="nav-btn" onclick="openModal('convertModal')">
+        <i class="fas fa-sync-alt"></i> Convert
+      </button>
+      <button class="nav-btn" onclick="openModal('cardRealistModal')">
+        <i class="fas fa-credit-card"></i> My Card
+      </button>
+      <a href="{{ path('app_wallet_export_pdf') }}" class="nav-btn">
+        <i class="fas fa-file-pdf"></i> Statement
+      </a>
+
+      <div class="sidebar-divider"></div>
+
+      <div class="nav-section-label">Account</div>
+      <a href="#" class="nav-btn"><i class="fas fa-shield-alt"></i> Security</a>
+      <a href="#" class="nav-btn"><i class="fas fa-cog"></i> Settings</a>
+    </div>
+
+    <div class="sidebar-bottom">
+      <a href="#" class="nav-btn danger"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+      <div class="user-card">
+        <div class="user-avatar"><i class="fas fa-user"></i></div>
+        <div class="user-info">
+          <div class="user-name">My Account</div>
+          <div class="user-role">ACTIVE</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══ MAIN ══ -->
+  <main class="main-content">
+
     {% for label, messages in app.flashes %}
-        {% for message in messages %}
-            {# On ajoute 'danger' dans la vérification pour que le rouge s'affiche #}
-            <div class="alert alert-{{ (label == 'error' or label == 'danger') ? 'danger' : 'success' }} alert-dismissible fade show rounded-4 border-0 shadow-sm mb-4">
-                <i class="fas {{ (label == 'error' or label == 'danger') ? 'fa-exclamation-circle' : 'fa-check-circle' }} me-2"></i>
-                {{ message }} 
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        {% endfor %}
+      {% for message in messages %}
+        <div class="flash-msg {{ (label == 'error' or label == 'danger') ? 'error' : 'success' }}">
+          <i class="fas {{ (label == 'error' or label == 'danger') ? 'fa-exclamation-circle' : 'fa-check-circle' }}"></i>
+          {{ message }}
+          <button class="flash-close" onclick="this.parentElement.remove()">×</button>
+        </div>
+      {% endfor %}
     {% endfor %}
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <div>
+        <div class="page-label">Portfolio</div>
+        <div class="page-title">My Wallets</div>
+        <div class="page-sub">Monitor and manage your digital assets across all platforms.</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-outline-head" onclick="openModal('addWalletModal')">
+          <i class="fas fa-plus"></i> New Wallet
+        </button>
+      </div>
+    </div>
+
+    <!-- STATS ROW -->
+    <div class="stats-row">
+      <div class="stat-card cyan">
+        <div class="stat-icon cyan"><i class="fas fa-wallet"></i></div>
+        <div class="stat-label">Total Wallets</div>
+        <div class="stat-value">{{ wallets|length }}</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-icon green"><i class="fas fa-university"></i></div>
+        <div class="stat-label">Fiat Accounts</div>
+        <div class="stat-value">{{ wallets|filter(w => w.typeWallet|lower == 'fiat')|length }}</div>
+      </div>
+      <div class="stat-card gold">
+        <div class="stat-icon gold"><i class="fab fa-bitcoin"></i></div>
+        <div class="stat-label">Crypto Wallets</div>
+        <div class="stat-value">{{ wallets|filter(w => w.typeWallet|lower == 'crypto')|length }}</div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-icon red"><i class="fas fa-bolt"></i></div>
+        <div class="stat-label">Trading Desks</div>
+        <div class="stat-value">{{ wallets|filter(w => w.typeWallet|lower == 'trading')|length }}</div>
+      </div>
+    </div>
+
+    <!-- PORTFOLIO CHART -->
+    <div class="chart-card">
+      <div class="card-header-row">
         <div>
-            <h2 class="fw-bold mb-1">My Wallets</h2>
-            <p class="text-muted">Monitor and manage your digital assets across multiple platforms.</p>
+          <div class="card-label-top">Analytics</div>
+          <div class="card-title-text">Portfolio Allocation</div>
         </div>
-        <div class="d-flex gap-2">
-            <a href="{{ path('app_wallet_export_pdf') }}" class="btn btn-outline-dark px-4 py-2 rounded-3 fw-bold shadow-sm">
-                <i class="fas fa-file-pdf me-2"></i> Statement
-            </a>
-            <button class="btn btn-outline-primary px-4 py-2 rounded-3 fw-bold shadow-sm" 
-                    data-bs-toggle="modal" data-bs-target="#cardRealistModal">
-                <i class="fas fa-credit-card me-2"></i> My Card
+      </div>
+      <div class="chart-layout">
+        <div class="chart-wrap">
+          <canvas id="walletChart"></canvas>
+          <div class="chart-center-label">
+            <div class="cl-num" id="chart-total">—</div>
+            <div class="cl-sub">assets</div>
+          </div>
+        </div>
+        <div class="legend-grid" id="chart-legend"></div>
+      </div>
+    </div>
+
+    <!-- WALLET COLUMNS -->
+    <div class="wallets-grid">
+
+      <div class="wallet-column col-fiat">
+        <div class="wallet-col-header">
+          <div class="col-icon"><i class="fas fa-university"></i></div>
+          <div class="col-title">Fiat Accounts</div>
+          <div class="col-count">{{ wallets|filter(w => w.typeWallet|lower == 'fiat')|length }}</div>
+        </div>
+        <div class="wallet-col-body">
+          {% for wallet in wallets|filter(w => w.typeWallet|lower == 'fiat') %}
+            {{ ui.render_wallet(wallet, 'col-fiat') }}
+          {% else %}
+            <div class="empty-col"><i class="fas fa-university"></i>No fiat accounts yet</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="wallet-column col-trading">
+        <div class="wallet-col-header">
+          <div class="col-icon"><i class="fas fa-bolt"></i></div>
+          <div class="col-title">Trading Desk</div>
+          <div class="col-count">{{ wallets|filter(w => w.typeWallet|lower == 'trading')|length }}</div>
+        </div>
+        <div class="wallet-col-body">
+          {% for wallet in wallets|filter(w => w.typeWallet|lower == 'trading') %}
+            {{ ui.render_wallet(wallet, 'col-trading') }}
+          {% else %}
+            <div class="empty-col"><i class="fas fa-bolt"></i>No trading desks yet</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="wallet-column col-crypto">
+        <div class="wallet-col-header">
+          <div class="col-icon"><i class="fab fa-bitcoin"></i></div>
+          <div class="col-title">Crypto Assets</div>
+          <div class="col-count">{{ wallets|filter(w => w.typeWallet|lower == 'crypto')|length }}</div>
+        </div>
+        <div class="wallet-col-body">
+          {% for wallet in wallets|filter(w => w.typeWallet|lower == 'crypto') %}
+            {{ ui.render_wallet(wallet, 'col-crypto') }}
+          {% else %}
+            <div class="empty-col"><i class="fab fa-bitcoin"></i>No crypto wallets yet</div>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- ══ TICKER ══ -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    {% set ticks = [
+      {sym:'BTC/USD', price:'67,412.50', change:'+2.34%', up:true},
+      {sym:'ETH/USD', price:'3,521.80',  change:'+1.87%', up:true},
+      {sym:'SOL/USD', price:'152.45',    change:'-0.62%', up:false},
+      {sym:'BNB/USD', price:'578.20',    change:'+0.94%', up:true},
+      {sym:'XRP/USD', price:'0.6120',    change:'-1.10%', up:false},
+      {sym:'ADA/USD', price:'0.4530',    change:'+3.21%', up:true},
+      {sym:'DOGE/USD',price:'0.1620',    change:'+5.44%', up:true},
+      {sym:'AVAX/USD',price:'38.91',     change:'-2.15%', up:false},
+      {sym:'LINK/USD',price:'14.72',     change:'+1.23%', up:true},
+    ] %}
+    {% for t in ticks %}{% for i in 1..2 %}
+      <span class="ticker-item">
+        <span class="sym">{{ t.sym }}</span>
+        {{ t.price }}
+        <span class="{{ t.up ? 'up' : 'dn' }}">{{ t.change }}</span>
+      </span>
+    {% endfor %}{% endfor %}
+  </div>
+</div>
+
+<!-- ════════════════ MODALS ════════════════ -->
+
+<!-- TRANSFER -->
+<div id="transactionModal" class="modal-backdrop-custom" style="display:none" onclick="closeModalBg(event,'transactionModal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title"><div class="modal-title-icon" style="background:rgba(0,229,255,.1);color:var(--accent)"><i class="fas fa-exchange-alt"></i></div>New Transfer</div>
+      <button class="modal-close" onclick="closeModal('transactionModal')">×</button>
+    </div>
+    <div class="modal-body">
+      {{ form_start(transactionForm, {'action': path('app_transaction_execute')}) }}
+        {{ form_widget(transactionForm.type) }}
+        <div class="field"><label class="f-label">Source RIB</label>
+          {{ form_widget(transactionForm.ribSource, {'attr': {'class': 'f-input', 'placeholder': 'Enter source RIB'}}) }}
+          <div style="color:var(--red);font-size:11.5px;margin-top:4px">{{ form_errors(transactionForm.ribSource) }}</div>
+        </div>
+        <div class="field"><label class="f-label">Destination RIB</label>
+          {{ form_widget(transactionForm.ribDestination, {'attr': {'class': 'f-input', 'placeholder': 'Enter destination RIB'}}) }}
+          <div style="color:var(--red);font-size:11.5px;margin-top:4px">{{ form_errors(transactionForm.ribDestination) }}</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="field"><label class="f-label">Amount</label>
+            {{ form_widget(transactionForm.montant, {'attr': {'class': 'f-input', 'placeholder': '0.00'}}) }}
+            <div style="color:var(--red);font-size:11.5px;margin-top:4px">{{ form_errors(transactionForm.montant) }}</div>
+          </div>
+          <div class="field"><label class="f-label">Currency</label>
+            {{ form_widget(transactionForm.currency, {'attr': {'class': 'f-select'}}) }}
+            <div style="color:var(--red);font-size:11.5px;margin-top:4px">{{ form_errors(transactionForm.currency) }}</div>
+          </div>
+        </div>
+        <button type="submit" class="modal-btn-primary"><i class="fas fa-paper-plane" style="margin-right:7px"></i>Confirm Transfer</button>
+      {{ form_end(transactionForm) }}
+    </div>
+  </div>
+</div>
+
+<!-- ADD WALLET -->
+<div id="addWalletModal" class="modal-backdrop-custom" style="display:none" onclick="closeModalBg(event,'addWalletModal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title"><div class="modal-title-icon" style="background:rgba(0,229,255,.1);color:var(--accent)"><i class="fas fa-plus"></i></div>Add New Wallet</div>
+      <button class="modal-close" onclick="closeModal('addWalletModal')">×</button>
+    </div>
+    <div class="modal-body">
+      {{ form_start(walletForm) }}
+        <div class="field"><label class="f-label">Account Type</label>{{ form_widget(walletForm.typeWallet, {'attr': {'class': 'f-select'}}) }}</div>
+        <div class="field"><label class="f-label">Initial Status</label>{{ form_widget(walletForm.statut, {'attr': {'class': 'f-select'}}) }}</div>
+        <button type="submit" class="modal-btn-primary"><i class="fas fa-wallet" style="margin-right:7px"></i>Create Account</button>
+      {{ form_end(walletForm) }}
+    </div>
+  </div>
+</div>
+
+<!-- ADD CURRENCY -->
+<div id="addCurrencyModal" class="modal-backdrop-custom" style="display:none" onclick="closeModalBg(event,'addCurrencyModal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title"><div class="modal-title-icon" style="background:rgba(0,230,118,.1);color:var(--green)"><i class="fas fa-coins"></i></div>Add Asset</div>
+      <button class="modal-close" onclick="closeModal('addCurrencyModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <form id="form-add-currency" method="POST">
+        <div class="field"><label class="f-label">Select Currency</label>
+          <select name="id_currency" id="select-currency" class="f-select" onchange="updateNom(this)" required>
+            {% for c in all_available_currencies %}
+              <option value="{{ c.id }}" data-nom="{{ c.nom }}" data-type="{{ c.typeCurrency|lower }}" data-trading="{{ c.isTrading ? 'true' : 'false' }}">{{ c.nom }} ({{ c.code|upper }})</option>
+            {% endfor %}
+          </select>
+          <input type="hidden" name="nom_currency" id="hidden-nom-currency">
+        </div>
+        <button type="submit" class="modal-btn-primary"><i class="fas fa-plus" style="margin-right:7px"></i>Add to Wallet</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT WALLET -->
+<div id="editModal" class="modal-backdrop-custom" style="display:none" onclick="closeModalBg(event,'editModal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title"><div class="modal-title-icon" style="background:rgba(240,180,41,.1);color:var(--gold)"><i class="fas fa-pen"></i></div>Edit Wallet</div>
+      <button class="modal-close" onclick="closeModal('editModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <form id="edit-form" method="POST">
+        <div class="field"><label class="f-label">Wallet Type</label><input type="text" id="modal-type" class="f-input" readonly disabled></div>
+        <div class="field"><label class="f-label">Status</label>
+          <select name="statut" id="modal-statut" class="f-select">
+            <option value="actif">ACTIF</option>
+            <option value="bloque">BLOQUE</option>
+          </select>
+        </div>
+        <button type="submit" class="modal-btn-primary"><i class="fas fa-save" style="margin-right:7px"></i>Save Changes</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div id="historyModal" class="modal-backdrop-custom" style="display:none" onclick="closeModalBg(event,'historyModal')">
+  <div class="modal-box lg" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title"><div class="modal-title-icon" style="background:rgba(0,229,255,.1);color:var(--accent)"><i class="fas fa-history"></i></div>Transaction History</div>
+      <button class="modal-close" onclick="closeModal('historyModal')">×</button>
+    </div>
+    <div class="modal-body" style="max-height:70vh;overflow-y:auto;">
+      <div class="history-rib" id="history-rib-display">Wallet: —</div>
+      <div id="history-spinner" class="spinner" style="display:none"></div>
+      <div style="overflow-x:auto">
+        <table class="history-table">
+          <thead><tr><th>Date</th><th>Type</th><th>Counterparty</th><th>Amount</th></tr></thead>
+          <tbody id="history-table-body">
+            <tr><td colspan="4" style="text-align:center;color:var(--text-3);padding:24px">Select a wallet to view history</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RECHARGE -->
+<div id="rechargeModal" class="modal-backdrop-custom" style="display:none" onclick="closeModalBg(event,'rechargeModal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title"><div class="modal-title-icon" style="background:rgba(0,229,255,.1);color:var(--accent)"><i class="fas fa-bolt"></i></div>Recharge Wallet</div>
+      <button class="modal-close" onclick="closeModal('rechargeModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <form action="{{ path('app_wallet_recharge') }}" method="POST">
+        <input type="hidden" name="wallet_id" id="recharge_wallet_id">
+        <div class="field"><label class="f-label">Select Currency</label>
+          <select name="currency_id" class="f-select">
+            {% for currency in all_available_currencies %}{% if currency.typeCurrency == 'fiat' %}
+              <option value="{{ currency.id }}">{{ currency.nom }}</option>
+            {% endif %}{% endfor %}
+          </select>
+        </div>
+        <div class="field"><label class="f-label">Amount</label>
+          <input type="number" name="amount" step="0.01" class="f-input" placeholder="0.00" required>
+        </div>
+        <button type="submit" class="modal-btn-primary"><i class="fas fa-paper-plane" style="margin-right:7px"></i>Send Verification Code</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- VERIFY CODE -->
+<div id="verifyCodeModal" class="modal-backdrop-custom" style="display:none" onclick="closeModalBg(event,'verifyCodeModal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title"><div class="modal-title-icon" style="background:rgba(240,180,41,.1);color:var(--gold)"><i class="fas fa-shield-alt"></i></div>Security Check</div>
+      <button class="modal-close" onclick="closeModal('verifyCodeModal')">×</button>
+    </div>
+    <div class="modal-body" style="text-align:center">
+      <form action="{{ path('app_wallet_recharge_confirm') }}" method="POST">
+        <p style="color:var(--text-2);margin-bottom:20px;font-size:14px">A 6-digit code has been sent to your email. Enter it to authorize the transaction.</p>
+        <input type="text" name="verification_code" class="f-input"
+               style="text-align:center;letter-spacing:10px;font-size:1.8rem;font-family:var(--font-mono)"
+               placeholder="000000" maxlength="6" required>
+        <button type="submit" class="modal-btn-primary" style="margin-top:20px"><i class="fas fa-check" style="margin-right:7px"></i>Verify & Confirm</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- CONVERT -->
+<div id="convertModal" class="modal-backdrop-custom" style="display:none" onclick="closeModalBg(event,'convertModal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title"><div class="modal-title-icon" style="background:rgba(0,230,118,.1);color:var(--green)"><i class="fas fa-sync-alt"></i></div>Asset Exchange</div>
+      <button class="modal-close" onclick="closeModal('convertModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <form action="{{ path('app_wallet_convert') }}" method="POST">
+        <div id="conv-step1">
+          <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:end;margin-bottom:16px">
+            <div class="field" style="margin:0"><label class="f-label">From</label>
+              <select id="api_from" class="f-select">{% for currency in all_available_currencies %}<option value="{{ currency.nom }}">{{ currency.nom }}</option>{% endfor %}</select>
+            </div>
+            <div style="padding-bottom:10px;color:var(--text-3)"><i class="fas fa-random"></i></div>
+            <div class="field" style="margin:0"><label class="f-label">To</label>
+              <select id="api_to" class="f-select">{% for currency in all_available_currencies %}<option value="{{ currency.nom }}">{{ currency.nom }}</option>{% endfor %}</select>
+            </div>
+          </div>
+          <div class="field"><label class="f-label">Amount</label>
+            <input type="number" id="api_amount" name="amount_from" class="f-input" placeholder="0.00">
+          </div>
+          <div id="result_preview" style="display:none;background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.15);border-radius:10px;padding:16px;text-align:center;margin-bottom:16px">
+            <div style="font-size:12px;color:var(--text-3);margin-bottom:4px">You will receive approximately</div>
+            <div id="preview_val" style="font-family:var(--font-head);font-size:22px;color:var(--accent);font-weight:700">0.00</div>
+          </div>
+          <button type="button" id="btn_calc" class="modal-btn-primary">Get Live Rate</button>
+        </div>
+        <div id="conv-step2" style="display:none">
+          <div class="field"><label class="f-label">Source Wallet (RIB)</label>
+            <select name="wallet_source" class="f-select">{% for wallet in wallets %}<option value="{{ wallet.idWallet }}">{{ wallet.rib }}</option>{% endfor %}</select>
+          </div>
+          <div class="field"><label class="f-label">Destination Wallet (RIB)</label>
+            <select name="wallet_destination" class="f-select">{% for wallet in wallets %}<option value="{{ wallet.idWallet }}">{{ wallet.rib }}</option>{% endfor %}</select>
+          </div>
+          <input type="hidden" name="currency_from_name" id="hidden_from">
+          <input type="hidden" name="currency_to_name" id="hidden_to">
+          <button type="submit" class="modal-btn-primary"><i class="fas fa-check" style="margin-right:7px"></i>Execute Transaction</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- CARD VIEW -->
+<div id="cardRealistModal" class="modal-backdrop-custom" style="display:none" onclick="closeModalBg(event,'cardRealistModal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title"><div class="modal-title-icon" style="background:rgba(0,229,255,.1);color:var(--accent)"><i class="fas fa-credit-card"></i></div>My Card</div>
+      <button class="modal-close" onclick="closeModal('cardRealistModal')">×</button>
+    </div>
+    <div class="modal-body">
+      {% if creditCard %}
+        <div class="credit-card-champions-pro">
+          <div class="card-texture"></div><div class="card-holo"></div><div class="card-bottom-band"></div><div class="card-gloss-effect"></div><div class="card-edge"></div>
+          <div class="card-header-pro">
+            <div class="card-chip-pro"><div class="chip-shine"></div><div class="chip-line-v"></div><div class="chip-line-h1"></div><div class="chip-line-h2"></div></div>
+            <div class="contactless-icon"><div class="nfc-arcs"><div class="nfc-arc"></div><div class="nfc-arc"></div><div class="nfc-arc"></div></div></div>
+          </div>
+          <div class="card-number-pro"><span>****</span><span>****</span><span>****</span><span>{{ creditCard.last4Digits }}</span></div>
+          <div class="card-footer-pro">
+            <div><span class="card-label-small">Card Holder</span><span class="card-value">{{ creditCard.cardHolderName|upper }}</span></div>
+            <div class="card-footer-right">
+              <div><span class="card-label-small">Expires</span><span class="card-value">{{ creditCard.expiryMonth|format('%02d') }}/{{ creditCard.expiryYear|slice(-2) }}</span></div>
+              <div class="card-brand-pro"><span class="visa-text">VISA</span><div class="visa-decorator"></div></div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:center;margin-top:20px">
+          <button type="button" class="modal-btn-secondary" style="width:auto;padding:10px 22px;margin:0" onclick="closeModal('cardRealistModal'); openModal('editCardPopUp')">
+            <i class="fas fa-pen" style="margin-right:6px"></i>Edit Card
+          </button>
+          <form method="post" action="{{ path('app_card_delete', {'id': creditCard.id}) }}" onsubmit="return confirm('Delete this card permanently?')">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ creditCard.id) }}">
+            <button type="submit" class="modal-btn-secondary" style="width:auto;padding:10px 22px;margin:0;border-color:rgba(255,23,68,.3);color:var(--red)">
+              <i class="fas fa-trash-alt" style="margin-right:6px"></i>Delete
             </button>
-            <button class="btn btn-outline-primary px-4 py-2 rounded-3 fw-bold shadow-sm" 
-                    data-bs-toggle="modal" data-bs-target="#transactionModal">
-                <i class="fas fa-exchange-alt me-2"></i> Transfer
-            </button>
-           <button class="btn btn-outline-primary px-4 py-2 rounded-3 fw-bold shadow-sm" 
-        data-bs-toggle="modal" data-bs-target="#convertModal">
-    <i class="fas fa-sync-alt me-2"></i> Convert
-</button>
-            
-            <button class="btn btn-primary px-4 py-2 rounded-3 fw-bold" data-bs-toggle="modal" data-bs-target="#addModal" style="background: var(--primary-gradient); border: none;">
-                <i class="fas fa-plus me-2"></i> New Wallet
-            </button>
+          </form>
         </div>
+      {% else %}
+        <div style="text-align:center;padding:30px 0">
+          <i class="fas fa-credit-card" style="font-size:48px;color:var(--text-3);opacity:.3;margin-bottom:16px;display:block"></i>
+          <div style="font-family:var(--font-head);font-size:18px;margin-bottom:8px">No Active Card</div>
+          <p style="color:var(--text-2);font-size:14px;margin-bottom:20px">You haven't linked a card to your account yet.</p>
+          <button type="button" class="modal-btn-primary" style="width:auto;display:inline-flex;padding:12px 24px" onclick="closeModal('cardRealistModal'); openModal('addCardModal')">
+            <i class="fas fa-plus-circle" style="margin-right:7px"></i>Add a Card
+          </button>
+        </div>
+      {% endif %}
     </div>
-
-        <div class="analytics-card">
-            <div class="d-flex align-items-center mb-3">
-                <div class="btn-mini btn-mini-edit me-3"><i class="fas fa-chart-pie"></i></div>
-                <h5 class="fw-bold m-0">Portfolio Allocation</h5>
-            </div>
-            <div class="row align-items-center">
-                <div class="col-md-4 text-center">
-                    <div style="max-width: 220px; margin: auto; min-height: 220px;">
-                        <canvas id="walletChart"></canvas>
-                    </div>
-                </div>
-                <div class="col-md-8">
-                    <div class="ps-md-4 mt-3 mt-md-0">
-                        <p class="text-muted small">This chart represents the distribution of your total assets across all your wallets, grouped by currency type.</p>
-                        <div id="chart-legend" class="d-flex flex-wrap gap-3">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row g-4">
-            <div class="col-lg-4">
-                <div class="wallet-column">
-                    <div class="column-header text-primary"><i class="fas fa-university me-2"></i> Fiat Accounts</div>
-                    {% for wallet in wallets|filter(w => w.typeWallet|lower == 'fiat') %}
-                        {{ ui.render_wallet(wallet, 'type-fiat') }}
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="wallet-column">
-                    <div class="column-header text-success"><i class="fas fa-bolt me-2"></i> Trading Desk</div>
-                    {% for wallet in wallets|filter(w => w.typeWallet|lower == 'trading') %}
-                        {{ ui.render_wallet(wallet, 'type-trading') }}
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="wallet-column">
-                    <div class="column-header text-warning"><i class="fab fa-bitcoin me-2"></i> Crypto Assets</div>
-                    {% for wallet in wallets|filter(w => w.typeWallet|lower == 'crypto') %}
-                        {{ ui.render_wallet(wallet, 'type-crypto') }}
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </main>
+  </div>
 </div>
 
-{# ULTRA-REALISTIC DYNAMIC CARD MODAL #}
-<div class="modal fade" id="cardRealistModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 bg-transparent shadow-none">
-            <div class="modal-body p-0">
-
-                {% if creditCard %}
-                    {# CARD DISPLAY #}
-                    <div class="credit-card-champions-pro" id="realistCard">
-                        <div class="card-texture"></div>
-                        <div class="card-holo" id="cardHolo"></div>
-                        <div class="card-bottom-band"></div>
-                        <div class="card-gloss-effect"></div>
-                        <div class="card-edge"></div>
-
-                        <div class="card-header-pro">
-                            <div class="card-chip-pro">
-                                <div class="chip-shine"></div>
-                                <div class="chip-line-v"></div>
-                                <div class="chip-line-h1"></div>
-                                <div class="chip-line-h2"></div>
-                            </div>
-                            <div class="contactless-icon">
-                                <div class="nfc-arcs">
-                                    <div class="nfc-arc"></div>
-                                    <div class="nfc-arc"></div>
-                                    <div class="nfc-arc"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card-number-pro">
-                            <span>****</span>
-                            <span>****</span>
-                            <span>****</span>
-                            <span>{{ creditCard.last4Digits }}</span>
-                        </div>
-
-                        <div class="card-footer-pro">
-                            <div class="card-footer-left">
-                                <span class="card-label">Card Holder</span>
-                                <span class="card-value">{{ creditCard.cardHolderName|upper }}</span>
-                            </div>
-                            <div class="card-footer-right">
-                                <div class="expiry-block">
-                                    <span class="card-label">Expires</span>
-                                    <span class="card-value">
-                                        {{ creditCard.expiryMonth|format('%02d') }}/{{ creditCard.expiryYear|slice(-2) }}
-                                    </span>
-                                </div>
-                                <div class="card-brand-pro">
-                                    <span class="visa-text">VISA</span>
-                                    <div class="visa-decorator"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {# --- CARD ACTIONS SECTION --- #}
-                    <div class="d-flex justify-content-center gap-3 mt-4">
-                        {# Button to trigger the Edit Pop-up #}
-                        <button type="button" 
-                                class="btn btn-light rounded-pill px-4 fw-bold shadow-sm"
-                                data-bs-toggle="modal" 
-                                data-bs-target="#editCardPopUp">
-                            <i class="fas fa-pen-fancy me-2 text-primary"></i> Edit Card
-                        </button>
-
-                        <form method="post" action="{{ path('app_card_delete', {'id': creditCard.id}) }}" 
-                              onsubmit="return confirm('Are you sure you want to delete this card? This action is permanent.');">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ creditCard.id) }}">
-                            <button type="submit" class="btn btn-danger rounded-pill px-4 fw-bold shadow-sm">
-                                <i class="fas fa-trash-alt me-2"></i> Delete
-                            </button>
-                        </form>
-                    </div>
-
-                {% else %}
-                    {# EMPTY STATE MESSAGE #}
-                    <div class="bg-white rounded-4 p-5 text-center shadow-lg">
-                        <div class="mb-4">
-                            <i class="fas fa-credit-card fa-4x text-muted opacity-25"></i>
-                        </div>
-                        <h4 class="fw-bold text-dark">No Active Card</h4>
-                        <p class="text-muted">You haven't linked a physical or virtual card to your account yet.</p>
-                        
-<button type="button" 
-        class="btn btn-primary rounded-pill px-4 py-2 mt-2" 
-        style="background: var(--primary-gradient); border: none;"
-        data-bs-toggle="modal" 
-        data-bs-target="#addCardModal">
-    <i class="fas fa-plus-circle me-2"></i> Add a Card
-</button>
-                    </div>
-                {% endif %}
-
-                <div class="text-center mt-4">
-                    <button type="button"
-                            class="btn btn-link text-white text-decoration-none fw-light"
-                            data-bs-dismiss="modal">
-                        Close View
-                    </button>
-                </div>
-
-            </div>
-        </div>
+<!-- EDIT CARD -->
+<div id="editCardPopUp" class="modal-backdrop-custom" style="display:none" onclick="closeModalBg(event,'editCardPopUp')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title"><div class="modal-title-icon" style="background:rgba(240,180,41,.1);color:var(--gold)"><i class="fas fa-edit"></i></div>Update Card</div>
+      <button class="modal-close" onclick="closeModal('editCardPopUp')">×</button>
     </div>
+    <div class="modal-body">
+      {% if creditCard and cardForm is defined %}
+        {{ form_start(cardForm, {'action': path('app_card_edit', {'id': creditCard.id}), 'method': 'POST', 'attr': {'novalidate': 'novalidate'}}) }}
+          <div class="field"><label class="f-label">Card Holder Name</label>{{ form_widget(cardForm.cardHolderName, {'attr': {'class': 'f-input'}}) }}<div style="color:var(--red);font-size:11.5px;margin-top:4px">{{ form_errors(cardForm.cardHolderName) }}</div></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="field"><label class="f-label">Expiry Month</label>{{ form_widget(cardForm.expiryMonth, {'attr': {'class': 'f-input'}}) }}<div style="color:var(--red);font-size:11.5px;margin-top:4px">{{ form_errors(cardForm.expiryMonth) }}</div></div>
+            <div class="field"><label class="f-label">Expiry Year</label>{{ form_widget(cardForm.expiryYear, {'attr': {'class': 'f-input'}}) }}<div style="color:var(--red);font-size:11.5px;margin-top:4px">{{ form_errors(cardForm.expiryYear) }}</div></div>
+          </div>
+          <button type="submit" class="modal-btn-primary">Save Changes</button>
+        {{ form_end(cardForm) }}
+      {% endif %}
+    </div>
+  </div>
 </div>
 
-{# SECONDARY MODAL: EDIT CARD FORM #}
-<div class="modal fade" id="editCardPopUp" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header border-0 pb-0 px-4 pt-4">
-                <h5 class="fw-bold">
-                    <i class="fas fa-edit me-2 text-primary"></i>Update Card Details
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            
-            <div class="modal-body p-4">
-                {% if creditCard and cardForm is defined %}
-                    {# AJOUT DE 'novalidate' POUR DÉSACTIVER LES BULLES HTML5 #}
-                    {{ form_start(cardForm, {
-                        'action': path('app_card_edit', {'id': creditCard.id}), 
-                        'method': 'POST',
-                        'attr': {'novalidate': 'novalidate'}
-                    }) }}
-                        
-                        <div class="mb-3">
-                            <label class="small fw-bold text-muted mb-1">CARD HOLDER NAME</label>
-                            {{ form_widget(cardForm.cardHolderName) }}
-                            <div class="text-danger small mt-1">
-                                {{ form_errors(cardForm.cardHolderName) }}
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-6">
-                                <label class="small fw-bold text-muted mb-1">EXPIRY MONTH</label>
-                                {{ form_widget(cardForm.expiryMonth) }}
-                                <div class="text-danger extra-small mt-1" style="font-size: 0.75rem;">
-                                    {{ form_errors(cardForm.expiryMonth) }}
-                                </div>
-                            </div>
-
-                            <div class="col-6">
-                                <label class="small fw-bold text-muted mb-1">EXPIRY YEAR</label>
-                                {{ form_widget(cardForm.expiryYear) }}
-                                <div class="text-danger extra-small mt-1" style="font-size: 0.75rem;">
-                                    {{ form_errors(cardForm.expiryYear) }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="btn w-100 py-3 text-white fw-bold rounded-3 mt-4" 
-                                style="background: var(--primary-gradient); border: none;">
-                            Save Changes
-                        </button>
-
-                    {{ form_end(cardForm) }}
-                {% else %}
-                    <div class="text-center py-4">
-                        <div class="spinner-border text-primary mb-2" role="status"></div>
-                        <p class="text-muted">Loading card information...</p>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
+<!-- ADD CARD -->
+<div id="addCardModal" class="modal-backdrop-custom" style="display:none" onclick="closeModalBg(event,'addCardModal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title"><div class="modal-title-icon" style="background:rgba(0,229,255,.1);color:var(--accent)"><i class="fas fa-plus-circle"></i></div>Register New Card</div>
+      <button class="modal-close" onclick="closeModal('addCardModal')">×</button>
     </div>
-</div>
-{# THIRD MODAL: ADD NEW CARD #}
-<div class="modal fade" id="addCardModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header border-0 pb-0 px-4 pt-4">
-                <h5 class="fw-bold">
-                    <i class="fas fa-plus-circle me-2 text-primary"></i>Register New Card
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            
-            <div class="modal-body p-4">
-                {# On utilise 'newCardForm' (que vous devrez passer depuis le contrôleur) #}
-                {% if newCardForm is defined %}
-                    {{ form_start(newCardForm, {
-                        'action': path('app_card_new'), 
-                        'method': 'POST',
-                        'attr': {'novalidate': 'novalidate'}
-                    }) }}
-                        
-                        <div class="mb-3">
-                            <label class="small fw-bold text-muted mb-1">CARD NUMBER (16 DIGITS)</label>
-                            {{ form_widget(newCardForm.fullNumber) }}
-                            <div class="text-danger small mt-1">{{ form_errors(newCardForm.fullNumber) }}</div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="small fw-bold text-muted mb-1">CARD HOLDER NAME</label>
-                            {{ form_widget(newCardForm.cardHolderName) }}
-                            <div class="text-danger small mt-1">{{ form_errors(newCardForm.cardHolderName) }}</div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-6">
-                                <label class="small fw-bold text-muted mb-1">EXPIRY MONTH</label>
-                                {{ form_widget(newCardForm.expiryMonth) }}
-                                <div class="text-danger small mt-1">{{ form_errors(newCardForm.expiryMonth) }}</div>
-                            </div>
-                            <div class="col-6">
-                                <label class="small fw-bold text-muted mb-1">EXPIRY YEAR</label>
-                                {{ form_widget(newCardForm.expiryYear) }}
-                                <div class="text-danger small mt-1">{{ form_errors(newCardForm.expiryYear) }}</div>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="btn w-100 py-3 text-white fw-bold rounded-3 mt-4" 
-                                style="background: var(--primary-gradient); border: none;">
-                            Link Card
-                        </button>
-                    {{ form_end(newCardForm) }}
-                {% endif %}
-            </div>
-        </div>
+    <div class="modal-body">
+      {% if newCardForm is defined %}
+        {{ form_start(newCardForm, {'action': path('app_card_new'), 'method': 'POST', 'attr': {'novalidate': 'novalidate'}}) }}
+          <div class="field"><label class="f-label">Card Number (16 digits)</label>{{ form_widget(newCardForm.fullNumber, {'attr': {'class': 'f-input'}}) }}<div style="color:var(--red);font-size:11.5px;margin-top:4px">{{ form_errors(newCardForm.fullNumber) }}</div></div>
+          <div class="field"><label class="f-label">Card Holder Name</label>{{ form_widget(newCardForm.cardHolderName, {'attr': {'class': 'f-input'}}) }}<div style="color:var(--red);font-size:11.5px;margin-top:4px">{{ form_errors(newCardForm.cardHolderName) }}</div></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="field"><label class="f-label">Expiry Month</label>{{ form_widget(newCardForm.expiryMonth, {'attr': {'class': 'f-input'}}) }}<div style="color:var(--red);font-size:11.5px;margin-top:4px">{{ form_errors(newCardForm.expiryMonth) }}</div></div>
+            <div class="field"><label class="f-label">Expiry Year</label>{{ form_widget(newCardForm.expiryYear, {'attr': {'class': 'f-input'}}) }}<div style="color:var(--red);font-size:11.5px;margin-top:4px">{{ form_errors(newCardForm.expiryYear) }}</div></div>
+          </div>
+          <button type="submit" class="modal-btn-primary"><i class="fas fa-link" style="margin-right:7px"></i>Link Card</button>
+        {{ form_end(newCardForm) }}
+      {% endif %}
     </div>
+  </div>
 </div>
 
-{# MODAL 1: RECHARGE WALLET #}
-<div class="modal fade" id="rechargeModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4 bg-dark text-white">
-            <form action="{{ path('app_wallet_recharge') }}" method="POST">
-                <div class="modal-header border-0">
-                    <h5 class="fw-bold text-info">Recharge Wallet</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <input type="hidden" name="wallet_id" id="recharge_wallet_id">
-                    
-                    <div class="mb-3">
-                        <label class="small fw-bold text-muted mb-1">SELECT CURRENCY</label>
-                        <select name="currency_id" class="form-select bg-secondary text-white border-0">
-                            {% for currency in all_available_currencies %}
-                                {% if currency.typeCurrency == 'fiat' %}
-                                    <option value="{{ currency.id }}">{{ currency.nom }}</option>
-                                {% endif %}
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="small fw-bold text-muted mb-1">AMOUNT</label>
-                        <input type="number" name="amount" step="0.01" class="form-control bg-secondary text-white border-0" placeholder="0.00" required>
-                    </div>
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="submit" class="btn btn-info w-100 py-2 fw-bold">Send Verification Code</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-{# MODAL 2: SECURITY VERIFICATION (Le code de mail) #}
-<div class="modal fade" id="verifyCodeModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4 bg-dark text-white">
-            <form action="{{ path('app_wallet_recharge_confirm') }}" method="POST">
-                <div class="modal-header border-0">
-                    <h5 class="fw-bold text-warning">Security Check</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4 text-center">
-                    <div class="mb-3">
-                        <i class="fas fa-shield-alt fa-3x text-warning mb-3"></i>
-                        <p class="text-muted">A 6-digit verification code has been sent to your email. Please enter it below to authorize the transaction.</p>
-                    </div>
-                    <input type="text" name="verification_code" 
-                           class="form-control form-control-lg bg-secondary text-white border-0 text-center fw-bold" 
-                           placeholder="000000" maxlength="6" required 
-                           style="letter-spacing: 8px; font-size: 1.8rem;">
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="submit" class="btn btn-warning w-100 py-2 fw-bold text-dark">Verify & Confirm Payment</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-{# TRANSACTION MODAL #}
-<div class="modal fade" id="transactionModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-body p-4">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="fw-bold m-0">New Transfer</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                
-                {{ form_start(transactionForm, {'action': path('app_transaction_execute')}) }}
-                    
-                    {{ form_widget(transactionForm.type) }}
-
-                    <div class="mb-3">
-                        <label class="small fw-bold text-muted mb-1">SOURCE RIB</label>
-                        {{ form_widget(transactionForm.ribSource, {
-                            'attr': {'class': 'form-control-custom', 'placeholder': 'Enter Source RIB'}
-                        }) }}
-                        <div class="text-danger small">{{ form_errors(transactionForm.ribSource) }}</div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="small fw-bold text-muted mb-1">DESTINATION RIB</label>
-                        {{ form_widget(transactionForm.ribDestination, {
-                            'attr': {'class': 'form-control-custom', 'placeholder': 'Enter Destination RIB'}
-                        }) }}
-                        <div class="text-danger small">{{ form_errors(transactionForm.ribDestination) }}</div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-6">
-                            <label class="small fw-bold text-muted mb-1">AMOUNT</label>
-                            {{ form_widget(transactionForm.montant, {
-                                'attr': {'class': 'form-control-custom', 'placeholder': '0.00'}
-                            }) }}
-                            <div class="text-danger small">{{ form_errors(transactionForm.montant) }}</div>
-                        </div>
-                        <div class="col-6">
-                            <label class="small fw-bold text-muted mb-1">CURRENCY</label>
-                            {{ form_widget(transactionForm.currency, {
-                                'attr': {'class': 'form-control-custom'}
-                            }) }}
-                            <div class="text-danger small">{{ form_errors(transactionForm.currency) }}</div>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn w-100 py-3 text-white fw-bold rounded-3 mt-2" 
-                            style="background: var(--primary-gradient); border: none;">
-                        <i class="fas fa-paper-plane me-2"></i> Confirm Transfer
-                    </button>
-
-                {{ form_end(transactionForm) }}
-            </div>
-        </div>
-    </div>
-</div>
-
-{# Section de la Modale d'ajout de Wallet #}
-<div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header border-0 pb-0 px-4 pt-4">
-                <h5 class="fw-bold">Add New Wallet</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-4">
-                {# CORRECTION CI-DESSOUS : utiliser walletForm #}
-                {{ form_start(walletForm) }}
-                    <label class="small fw-bold text-muted mb-2">ACCOUNT TYPE</label>
-                    {{ form_widget(walletForm.typeWallet, {'attr': {'class': 'form-control-custom'}}) }}
-                    
-                    <label class="small fw-bold text-muted mb-2">INITIAL STATUS</label>
-                    {{ form_widget(walletForm.statut, {'attr': {'class': 'form-control-custom'}}) }}
-                    
-                    <button type="submit" class="btn w-100 py-3 mt-3 text-white fw-bold rounded-3" style="background: var(--primary-gradient); border: none;">
-                        Create Account
-                    </button>
-                {{ form_end(walletForm) }}
-            </div>
-        </div>
-    </div>
-</div>
-
-{# MODALE AJOUT CURRENCY #}
-<div class="modal fade" id="addCurrencyModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            <form id="form-add-currency" method="POST">
-                <div class="modal-body p-4">
-                    <h6 class="fw-bold mb-4">Add Asset to Wallet</h6>
-                    <label class="small fw-bold text-muted mb-2">SELECT CURRENCY</label>
-                    <select name="id_currency" id="select-currency" class="form-control-custom" onchange="updateNom(this)" required>
-                        {% for c in all_available_currencies %}
-                            <option value="{{ c.id }}" data-nom="{{ c.nom }}" data-type="{{ c.typeCurrency|lower }}" data-trading="{{ c.isTrading ? 'true' : 'false' }}">
-                                {{ c.nom }} ({{ c.code|upper }})
-                            </option>
-                        {% endfor %}
-                    </select>
-                    <input type="hidden" name="nom_currency" id="hidden-nom-currency">
-                    <button type="submit" class="btn w-100 py-3 text-white fw-bold rounded-3 mt-2" style="background: var(--primary-gradient); border: none;">Confirm Addition</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-{# MODALE EDIT STATUT #}
-<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            <form id="edit-form" method="POST">
-                <div class="modal-body p-4">
-                    <h6 class="fw-bold mb-4">Edit Wallet Settings</h6>
-                    <label class="small fw-bold text-muted mb-2">WALLET TYPE</label>
-                    <input type="text" id="modal-type" class="form-control-custom" readonly disabled>
-                    <label class="small fw-bold text-muted mb-2">STATUS</label>
-                    <select name="statut" id="modal-statut" class="form-control-custom">
-                        <option value="actif">ACTIF</option>
-                        <option value="bloque">BLOQUE</option>
-                    </select>
-                    <button type="submit" class="btn w-100 py-3 text-white fw-bold rounded-3 mt-2" style="background: var(--primary-gradient); border: none;">Save Changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-{# MODALE HISTORY #}
-<div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header border-0 px-4 pt-4">
-                <h5 class="fw-bold m-0"><i class="fas fa-history me-2 text-info"></i>Transaction History</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-4">
-                <p id="history-rib-title" class="text-muted small fw-bold mb-3"></p>
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th class="border-0">Date</th>
-                                <th class="border-0">Type</th>
-                                <th class="border-0">Counterparty</th>
-                                <th class="border-0 text-end">Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody id="history-table-body">
-                            </tbody>
-                    </table>
-                </div>
-                <div id="history-loader" class="text-center py-4 d-none">
-                    <div class="spinner-border text-primary" role="status"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="modal fade" id="convertModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            <form action="{{ path('app_wallet_convert') }}" method="POST">
-                <div class="modal-header border-0 px-4 pt-4">
-                    <h5 class="fw-bold text-primary"><i class="fas fa-coins me-2"></i> Asset Exchange</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body p-4">
-                    <div id="step1">
-                        <div class="row g-2 mb-3">
-                            <div class="col-5">
-                                <label class="small fw-bold text-muted">FROM</label>
-                                <select id="api_from" class="form-select border-2">
-                                    {% for currency in all_available_currencies %}
-                                        <option value="{{ currency.nom }}">{{ currency.nom }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-2 text-center mt-4"><i class="fas fa-random text-muted"></i></div>
-                            <div class="col-5">
-                                <label class="small fw-bold text-muted">TO</label>
-                                <select id="api_to" class="form-select border-2">
-                                    {% for currency in all_available_currencies %}
-                                        <option value="{{ currency.nom }}">{{ currency.nom }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="small fw-bold text-muted">AMOUNT</label>
-                            <input type="number" id="api_amount" name="amount_from" class="form-control border-2" placeholder="0.00">
-                        </div>
-                        
-                        <div id="result_preview" class="p-3 rounded-3 text-center mb-3 d-none" style="background: #f8f9fa; border: 2px dashed #0d6efd;">
-                            <span class="text-muted small">You will get approximately:</span>
-                            <h3 id="preview_val" class="fw-bold text-primary mb-0">0.00</h3>
-                        </div>
-
-                        <button type="button" id="btn_calc" class="btn btn-primary w-100 py-2 fw-bold rounded-3">Get Live Rate</button>
-                    </div>
-
-                    <div id="step2" class="d-none">
-                        <div class="mb-3">
-                            <label class="small fw-bold text-muted">SOURCE WALLET (RIB)</label>
-                            <select name="wallet_source" class="form-select border-2">
-                                {% for wallet in wallets %}
-                                    <option value="{{ wallet.idWallet }}">{{ wallet.rib }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="small fw-bold text-muted">DESTINATION WALLET (RIB)</label>
-                            <select name="wallet_destination" class="form-select border-2">
-                                {% for wallet in wallets %}
-                                    <option value="{{ wallet.idWallet }}">{{ wallet.rib }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <input type="hidden" name="currency_from_name" id="hidden_from">
-                        <input type="hidden" name="currency_to_name" id="hidden_to">
-                    </div>
-                </div>
-
-                <div class="modal-footer border-0 pb-4 px-4">
-                    <button type="submit" id="btn_final" class="btn w-100 py-3 text-white fw-bold rounded-3 d-none" 
-                            style="background: var(--primary-gradient); border:none;">
-                        Execute & Seal Transaction
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<script>
-document.getElementById('btn_calc').addEventListener('click', function() {
-    const from = document.getElementById('api_from').value;
-    const to = document.getElementById('api_to').value;
-    const amount = document.getElementById('api_amount').value;
-    const btn = this;
-
-    if(!amount || amount <= 0) return alert("Please enter a valid amount.");
-
-    const originalText = btn.innerText;
-    btn.innerText = "Fetching live rate...";
-    btn.disabled = true;
-
-    const url = "{{ path('app_wallet_get_rate') }}?from=" + from + "&to=" + to + "&amount=" + amount;
-
-    fetch(url)
-        .then(res => {
-            if (!res.ok) throw new Error('Service unavailable');
-            return res.json();
-        })
-        .then(data => {
-            if (data.error) {
-                alert("Error: " + data.error);
-                btn.innerText = originalText;
-                btn.disabled = false;
-            } else {
-                document.getElementById('preview_val').innerText = data.result.toFixed(4) + " " + to;
-                document.getElementById('result_preview').classList.remove('d-none');
-                
-                btn.innerText = "Next: Select Wallets";
-                btn.disabled = false;
-                btn.classList.replace('btn-primary', 'btn-success');
-                
-                // On attache l'événement pour passer à l'étape 2
-                btn.onclick = function() {
-                    document.getElementById('step1').classList.add('d-none');
-                    document.getElementById('step2').classList.remove('d-none');
-                    document.getElementById('btn_final').classList.remove('d-none');
-                    document.getElementById('hidden_from').value = from;
-                    document.getElementById('hidden_to').value = to;
-                };
-            }
-        })
-        .catch(err => {
-            alert("Connection error. Please try again.");
-            btn.innerText = originalText;
-            btn.disabled = false;
-        });
-});
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- ════════════════ SCRIPTS ════════════════ -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // --- 1. LOGIQUE DE VÉRIFICATION PAR MAIL (POPUP AUTO) ---
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('verify')) {
-            const verifyModalElement = document.getElementById('verifyCodeModal');
-            if (verifyModalElement) {
-                const verifyModal = new bootstrap.Modal(verifyModalElement);
-                verifyModal.show();
-            }
-        }
+/* ── MODAL SYSTEM ── */
+function openModal(id)  { document.getElementById(id).style.display = 'flex'; document.body.style.overflow = 'hidden'; }
+function closeModal(id) { document.getElementById(id).style.display = 'none';  document.body.style.overflow = ''; }
+function closeModalBg(e, id) { if (e.target === e.currentTarget) closeModal(id); }
 
-        // --- 2. GESTION DU GRAPHIQUE ---
-        const canvas = document.getElementById('walletChart');
-        if (canvas) {
-            const ctx = canvas.getContext('2d');
-            
-            fetch('{{ path('app_wallet_chart_data') }}')
-                .then(response => response.json())
-                .then(data => {
-                    if (!data || data.length === 0) {
-                        const legendDiv = document.getElementById('chart-legend');
-                        if (legendDiv) legendDiv.innerHTML = '<span class="text-muted small italic">No balance data available yet.</span>';
-                        return;
-                    }
+/* ── WALLET HELPERS ── */
+function setAddCurrencyWallet(id, type) {
+  document.getElementById('form-add-currency').action = '/wallet/' + id + '/add-currency';
+  const sel = document.getElementById('select-currency');
+  [...sel.options].forEach(opt => {
+    const cType = opt.getAttribute('data-type');
+    const isTr  = opt.getAttribute('data-trading');
+    const vis   = (type === 'trading') ? (cType === 'crypto' && isTr === 'true') : (cType === type);
+    opt.style.display = vis ? '' : 'none';
+    opt.disabled = !vis;
+  });
+  const first = [...sel.options].find(o => !o.disabled);
+  if (first) { sel.value = first.value; updateNom(sel); }
+}
+function updateNom(sel) {
+  const opt = sel.options[sel.selectedIndex];
+  document.getElementById('hidden-nom-currency').value = opt ? opt.getAttribute('data-nom') : '';
+}
+function setEditWallet(id, type, statut) {
+  document.getElementById('edit-form').action   = '/wallet/' + id + '/edit';
+  document.getElementById('modal-type').value   = type.toUpperCase();
+  document.getElementById('modal-statut').value = statut;
+}
 
-                    const labels = data.map(item => item.name);
-                    const values = data.map(item => item.total);
-                    
-                    new Chart(ctx, {
-                        type: 'doughnut',
-                        data: {
-                            labels: labels,
-                            datasets: [{
-                                data: values,
-                                backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#3b82f6', '#f43f5e', '#8b5cf6'],
-                                borderWidth: 0,
-                                hoverOffset: 10
-                            }]
-                        },
-                        options: {
-                            responsive: true, maintainAspectRatio: false,
-                            plugins: { legend: { display: false } },
-                            cutout: '70%'
-                        }
-                    });
-
-                    const legendDiv = document.getElementById('chart-legend');
-                    if (legendDiv) {
-                        legendDiv.innerHTML = ''; 
-                        const colors = ['#6366f1', '#10b981', '#f59e0b', '#3b82f6', '#f43f5e', '#8b5cf6'];
-                        
-                        data.forEach((item, index) => {
-                            const color = colors[index % colors.length];
-                            legendDiv.innerHTML += `
-                                <div class="d-flex align-items-center">
-                                    <div style="width: 12px; height: 12px; background: ${color}; border-radius: 3px; margin-right: 8px;"></div>
-                                    <span class="small fw-bold">${item.name}</span>
-                                    <span class="small text-muted ms-2">${parseFloat(item.total).toFixed(2)}</span>
-                                </div>
-                            `;
-                        });
-                    }
-                });
-        }
-
-        // --- 3. LOGIQUE RECHARGE MODAL (SET WALLET ID) ---
-        const rechargeModal = document.getElementById('rechargeModal');
-        if (rechargeModal) {
-            rechargeModal.addEventListener('show.bs.modal', function (event) {
-                const button = event.relatedTarget;
-                const walletId = button.getAttribute('data-id');
-                const inputId = document.getElementById('recharge_wallet_id');
-                if (inputId) inputId.value = walletId;
-            });
-        }
-
-        // --- 4. LOGIQUE HISTORY MODAL ---
-        const historyModal = document.getElementById('historyModal');
-        if (historyModal) {
-            historyModal.addEventListener('show.bs.modal', function (event) {
-                const button = event.relatedTarget;
-                const walletId = button.getAttribute('data-id');
-                const rib = button.getAttribute('data-rib');
-                const tableBody = document.getElementById('history-table-body');
-                const loader = document.getElementById('history-loader');
-                const ribTitle = document.getElementById('history-rib-title');
-
-                if (ribTitle) ribTitle.innerText = "Wallet: " + rib;
-                if (tableBody) tableBody.innerHTML = '';
-                if (loader) loader.classList.remove('d-none');
-
-                fetch(`/wallet/${walletId}/history-json`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (loader) loader.classList.add('d-none');
-                        if (!tableBody) return;
-
-                        if (data.length === 0) {
-                            tableBody.innerHTML = '<tr><td colspan="4" class="text-center py-3">No transactions found.</td></tr>';
-                            return;
-                        }
-                        data.forEach(tx => {
-                            const isOut = tx.direction === 'out'; 
-                            const amountClass = isOut ? 'text-danger' : 'text-success';
-                            const prefix = isOut ? '-' : '+';
-
-                            tableBody.innerHTML += `
-                                <tr>
-                                    <td class="small">${tx.date}</td>
-                                    <td><span class="badge bg-light text-dark text-uppercase" style="font-size:0.7rem;">${tx.type}</span></td>
-                                    <td class="small text-muted">${tx.counterparty}</td>
-                                    <td class="text-end fw-bold ${amountClass}">${prefix}${tx.amount} ${tx.currency}</td>
-                                </tr>
-                            `;
-                        });
-                    })
-                    .catch(() => {
-                        if (loader) loader.classList.add('d-none');
-                        if (tableBody) tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading history.</td></tr>';
-                    });
-            });
-        }
-
-        // --- 5. LOGIQUE DES AUTRES MODALES (Add Currency / Edit) ---
-        const addCurrencyModal = document.getElementById('addCurrencyModal');
-        if (addCurrencyModal) {
-            addCurrencyModal.addEventListener('show.bs.modal', function (event) {
-                const btn = event.relatedTarget;
-                const walletId = btn.getAttribute('data-id');
-                const walletType = btn.getAttribute('data-type'); 
-                const form = document.getElementById('form-add-currency');
-                if (form) form.action = '/wallet/' + walletId + '/add-currency';
-                
-                const select = document.getElementById('select-currency');
-                if (select) {
-                    [...select.options].forEach(opt => {
-                        const cType = opt.getAttribute('data-type');
-                        const isTrading = opt.getAttribute('data-trading');
-                        let visible = (walletType === 'trading') ? (cType === 'crypto' && isTrading === 'true') : (cType === walletType);
-                        opt.style.display = visible ? 'block' : 'none';
-                        opt.disabled = !visible;
-                    });
-                    const first = [...select.options].find(o => !o.disabled);
-                    if (first) { select.value = first.value; updateNom(select); }
-                }
-            });
-        }
-
-        const editModal = document.getElementById('editModal');
-        if (editModal) {
-            editModal.addEventListener('show.bs.modal', function (event) {
-                const button = event.relatedTarget;
-                const id = button.getAttribute('data-id');
-                const typeInput = document.getElementById('modal-type');
-                const statutInput = document.getElementById('modal-statut');
-                const form = document.getElementById('edit-form');
-                
-                if (typeInput) typeInput.value = button.getAttribute('data-type').toUpperCase();
-                if (statutInput) statutInput.value = button.getAttribute('data-statut');
-                if (form) form.action = '/wallet/' + id + '/edit';
-            });
-        }
+/* ── HISTORY ── */
+function loadHistory(id, rib) {
+  document.getElementById('history-rib-display').textContent = 'Wallet: ' + rib;
+  const tbody   = document.getElementById('history-table-body');
+  const spinner = document.getElementById('history-spinner');
+  tbody.innerHTML = '';
+  spinner.style.display = 'block';
+  fetch('/wallet/' + id + '/history-json')
+    .then(r => r.json())
+    .then(data => {
+      spinner.style.display = 'none';
+      if (!data.length) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-3);padding:24px">No transactions found.</td></tr>'; return; }
+      tbody.innerHTML = data.map(tx => {
+        const isOut = tx.direction === 'out';
+        return `<tr>
+          <td class="tx-date">${tx.date}</td>
+          <td><span class="tx-type">${tx.type}</span></td>
+          <td class="tx-counter">${tx.counterparty}</td>
+          <td class="tx-amount ${isOut ? 'dn' : 'up'}">${isOut ? '−' : '+'}${tx.amount} ${tx.currency}</td>
+        </tr>`;
+      }).join('');
+    })
+    .catch(() => {
+      spinner.style.display = 'none';
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--red)">Error loading history.</td></tr>';
     });
+}
 
-    function updateNom(select) {
-        const selected = select.options[select.selectedIndex];
-        const input = document.getElementById('hidden-nom-currency');
-        if (input) input.value = selected ? selected.getAttribute('data-nom') : '';
-    }
+/* ── CONVERT ── */
+document.getElementById('btn_calc').addEventListener('click', function() {
+  const from = document.getElementById('api_from').value;
+  const to   = document.getElementById('api_to').value;
+  const amount = document.getElementById('api_amount').value;
+  const btn = this;
+  if (!amount || amount <= 0) return alert('Please enter a valid amount.');
+  btn.textContent = 'Fetching live rate…'; btn.disabled = true;
+  fetch('{{ path('app_wallet_get_rate') }}?from=' + from + '&to=' + to + '&amount=' + amount)
+    .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+    .then(data => {
+      if (data.error) { alert('Error: ' + data.error); btn.textContent = 'Get Live Rate'; btn.disabled = false; return; }
+      document.getElementById('preview_val').textContent = data.result.toFixed(4) + ' ' + to;
+      document.getElementById('result_preview').style.display = 'block';
+      btn.textContent = 'Next: Select Wallets'; btn.disabled = false;
+      btn.onclick = () => {
+        document.getElementById('conv-step1').style.display = 'none';
+        document.getElementById('conv-step2').style.display = 'block';
+        document.getElementById('hidden_from').value = from;
+        document.getElementById('hidden_to').value = to;
+      };
+    })
+    .catch(() => { alert('Connection error.'); btn.textContent = 'Get Live Rate'; btn.disabled = false; });
+});
+
+/* ── AUTO-OPEN VERIFY MODAL ── */
+document.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has('verify')) openModal('verifyCodeModal');
+});
+
+/* ── CHART ── */
+document.addEventListener('DOMContentLoaded', () => {
+  const canvas = document.getElementById('walletChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  fetch('{{ path('app_wallet_chart_data') }}')
+    .then(r => r.json())
+    .then(data => {
+      if (!data || !data.length) {
+        document.getElementById('chart-legend').innerHTML = '<span style="color:var(--text-3);font-size:13px">No balance data yet.</span>';
+        return;
+      }
+      const colors = ['#00e5ff', '#00e676', '#f0b429', '#3b82f6', '#ff1744', '#8b5cf6'];
+      document.getElementById('chart-total').textContent = data.length;
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: data.map(d => d.name),
+          datasets: [{ data: data.map(d => parseFloat(d.total)), backgroundColor: colors.map(c => c + '22'), borderColor: colors, borderWidth: 2, hoverOffset: 8 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '72%' }
+      });
+      document.getElementById('chart-legend').innerHTML = data.map((item, i) => `
+        <div class="legend-item">
+          <div class="legend-dot" style="background:${colors[i % colors.length]}"></div>
+          <div><div class="legend-name">${item.name}</div><div class="legend-val">${parseFloat(item.total).toFixed(2)}</div></div>
+        </div>`).join('');
+    })
+    .catch(err => console.error('Chart error:', err));
+});
 </script>
 {% endblock %}
