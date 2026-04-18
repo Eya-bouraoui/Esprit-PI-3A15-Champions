@@ -118,7 +118,7 @@ class AssetType extends AbstractType
                 ],
             ]);
 
-        // ── Règles métier via événement POST_SUBMIT ──
+       
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event): void {
             $form  = $event->getForm();
             $asset = $event->getData();
@@ -127,22 +127,19 @@ class AssetType extends AbstractType
                 return;
             }
 
-            // Règle métier 1 : un asset Crypto doit être sur le marché Crypto
             if ($asset->getType() === Asset::TYPE_CRYPTO 
     && !in_array($asset->getMarket(), [Asset::MARKET_CRYPTO, Asset::MARKET_BINANCE])) {
     $form->get('market')->addError(
         new FormError('A cryptocurrency asset must be on the Crypto or Binance market.')
     );
 }
-
-            // Règle métier 2 : Stock et Forex ne peuvent pas être sur le marché Crypto
             if (in_array($asset->getType(), [Asset::TYPE_STOCK, Asset::TYPE_FOREX]) && $asset->getMarket() === Asset::MARKET_CRYPTO) {
                 $form->get('market')->addError(
                     new FormError('Stock and Forex assets cannot be on the Crypto market.')
                 );
             }
 
-            // Règle métier 3 : prix minimum selon le type
+           
             $price = (float) $asset->getCurrentPrice();
             if ($asset->getType() === Asset::TYPE_CRYPTO && $price < 0.00000001) {
                 $form->get('currentPrice')->addError(

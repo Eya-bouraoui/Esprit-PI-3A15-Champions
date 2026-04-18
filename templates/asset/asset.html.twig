@@ -158,7 +158,9 @@
         </button>
 
         <!-- Search -->
-          <form method="GET" 
+
+        <form method="GET" 
+
       action="{{ path('app_backoffice_asset_index') }}"
       onsubmit="event.preventDefault(); window.location.href='/asset/?q='+encodeURIComponent(this.querySelector('input[name=\'q\']').value); return false;"
       class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
@@ -174,6 +176,9 @@
         </div>
     </div>
 </form>
+
+
+
         <!-- Topbar Nav -->
         <ul class="navbar-nav ml-auto">
 
@@ -470,13 +475,7 @@
 <script src="/js/sb-admin-2.min.js"></script>
 
 <script>
-  const symbolInput = document.getElementById('symbol-input');
-  if (symbolInput) {
-    symbolInput.addEventListener('input', function () {
-      this.value = this.value.toUpperCase();
-    });
-  }
-    $(document).ready(function () {
+  $(document).ready(function () {
 
     // Search
     $('#search-form').off('submit').on('submit', function (e) {
@@ -491,8 +490,10 @@
     $('#symbol-input').on('input', function () {
       this.value = this.value.toUpperCase();
     });
-
+  });
 </script>
 
 </body>
 {% endblock %}
+
+

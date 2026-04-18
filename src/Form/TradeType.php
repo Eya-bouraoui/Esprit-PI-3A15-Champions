@@ -68,7 +68,7 @@ class TradeType extends AbstractType
                 'attr'  => ['placeholder' => 'e.g. 0.5', 'min' => '0.0001'],
                 'constraints' => [
                     new NotBlank(message: 'Quantity is required.'),
-                    // ✅ Correction : notInRangeMessage uniquement quand min ET max sont définis
+                    
                     new Range(
                         min: 0.0001,
                         max: 1_000_000,
@@ -94,13 +94,12 @@ class TradeType extends AbstractType
             ])
         ;
 
-        // ── Transformer assetId : string ↔ int ──
+        
         $builder->get('assetId')->addModelTransformer(new CallbackTransformer(
             fn($value): ?string => ($value === null || $value === 0) ? null : (string) $value,
             fn($value): int     => ($value === null || $value === '') ? 0 : (int) $value,
         ));
 
-        // ── Règles métier via événement POST_SUBMIT ──
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event): void {
             $form  = $event->getForm();
             $trade = $event->getData();
@@ -112,21 +111,21 @@ class TradeType extends AbstractType
             $orderMode = $trade->getOrderMode();
             $price     = $trade->getPrice();
 
-            // Règle 1 : ordre LIMIT → prix obligatoire
+            
             if ($orderMode === 'LIMIT' && ($price === null || $price <= 0)) {
                 $form->get('price')->addError(
                     new FormError('A limit price is required for Limit orders.')
                 );
             }
 
-            // Règle 2 : ordre MARKET → pas de prix
+           
             if ($orderMode === 'MARKET' && $price !== null) {
                 $form->get('price')->addError(
                     new FormError('Market orders cannot have a limit price. Leave this field empty.')
                 );
             }
 
-            // Règle 3 : asset valide
+       
             if ($trade->getAssetId() === 0) {
                 $form->get('assetId')->addError(
                     new FormError('Please select a valid asset.')
