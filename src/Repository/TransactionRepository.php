@@ -6,9 +6,7 @@ use App\Entity\Transaction;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<Transaction>
- */
+
 class TransactionRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -16,9 +14,7 @@ class TransactionRepository extends ServiceEntityRepository
         parent::__construct($registry, Transaction::class);
     }
 
-    /**
-     * Recherche dynamique Nom/Prénom et Type
-     */
+    
     public function findByFilters(?string $userName, ?string $type): array
     {
         $qb = $this->createQueryBuilder('t')
@@ -28,7 +24,6 @@ class TransactionRepository extends ServiceEntityRepository
             ->leftJoin('cc.utilisateur', 'u2');
 
         if ($userName) {
-            // CONCAT permet de chercher sur "Nom Prénom" ou "Prénom Nom" en une seule fois
             $qb->andWhere(
                 $qb->expr()->orX(
                     'CONCAT(u.prenom, \' \', u.nom) LIKE :name',

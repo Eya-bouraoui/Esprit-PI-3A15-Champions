@@ -1,5 +1,11 @@
-# config/services.yaml
+# config/services.yaml fusionné
 parameters:
+    # Tes paramètres (Blockchain/WhatsApp)
+    twilio_sid: '%env(TWILIO_SID)%'
+    twilio_token: '%env(TWILIO_TOKEN)%'
+    twilio_whatsapp_from: '+14155238886'
+    
+    # Paramètres de tes collègues (Gestion produits)
     products_images_directory: '%kernel.project_dir%/public/uploads/products'
 
 services:
@@ -13,6 +19,11 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+
+    App\Service\StripeService:
+        arguments:
+            $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
+
     App\Security\LoginSuccessHandler:
         arguments:
             $router: '@router'

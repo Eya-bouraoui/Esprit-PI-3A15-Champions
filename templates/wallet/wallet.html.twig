@@ -72,6 +72,281 @@
         .btn-mini-add:hover { background: #10b981; color: white; }
 
         .form-control-custom { background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 12px; margin-bottom: 15px; width: 100%; }
+
+      /* ===== CARTE BANCAIRE ULTRA-RÉALISTE ===== */
+.credit-card-champions-pro {
+    width: 100%;
+    max-width: 420px;
+    height: 250px;
+    border-radius: 18px;
+    padding: 24px 28px;
+    position: relative;
+    color: white;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 0 auto;
+    background: linear-gradient(135deg, #1a2744 0%, #0d1b3e 40%, #1a2744 70%, #0a1628 100%);
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.07) inset,
+        0 -1px 0 rgba(0,0,0,0.5) inset,
+        0 25px 60px rgba(0,0,0,0.6),
+        0 5px 15px rgba(0,0,0,0.4);
+    cursor: default;
+    user-select: none;
+    transform-style: preserve-3d;
+    transition: transform 0.1s ease;
+}
+
+/* Texture lignes horizontales plastique */
+.card-texture {
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+    background-image: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(255,255,255,0.012) 2px,
+        rgba(255,255,255,0.012) 4px
+    );
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Hologramme dynamique (JS requis pour l'effet souris) */
+.card-holo {
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+    background: radial-gradient(
+        ellipse at 50% 50%,
+        rgba(120,180,255,0.06) 0%,
+        rgba(255,120,200,0.05) 35%,
+        rgba(120,255,180,0.04) 60%,
+        transparent 80%
+    );
+    pointer-events: none;
+    z-index: 0;
+    transition: background 0.05s;
+}
+
+/* Dégradé sombre en bas */
+.card-bottom-band {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 35%;
+    background: linear-gradient(to top, rgba(0,0,0,0.3) 0%, transparent 100%);
+    border-radius: 0 0 18px 18px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Reflet brillant en haut */
+.card-gloss-effect {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 55%;
+    border-radius: 18px 18px 60% 60%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.09) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Bordure lumineuse */
+.card-edge {
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.13);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Puce EMV dorée */
+.card-chip-pro {
+    width: 48px;
+    height: 36px;
+    background: linear-gradient(135deg, #e8c84a 0%, #c8a020 30%, #f0d870 55%, #b89010 80%, #e0bc3a 100%);
+    border-radius: 6px;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5), 0 0 0 0.5px rgba(0,0,0,0.3) inset;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.card-chip-pro::before {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 3px;
+}
+.chip-line-v {
+    position: absolute;
+    top: 3px; bottom: 3px;
+    left: 50%; transform: translateX(-50%);
+    width: 1px;
+    background: rgba(0,0,0,0.15);
+}
+.chip-line-h1 {
+    position: absolute;
+    top: 33%; left: 3px; right: 3px;
+    height: 1px;
+    background: rgba(0,0,0,0.15);
+}
+.chip-line-h2 {
+    position: absolute;
+    top: 60%; left: 3px; right: 3px;
+    height: 1px;
+    background: rgba(0,0,0,0.15);
+}
+.chip-shine {
+    position: absolute;
+    top: 2px; left: 3px; right: 3px;
+    height: 40%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.35) 0%, transparent 100%);
+    border-radius: 3px 3px 0 0;
+}
+
+/* Icône NFC / sans contact */
+.contactless-icon {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+}
+.nfc-arcs {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5px;
+}
+.nfc-arc {
+    border: 1.5px solid rgba(255,255,255,0.55);
+    border-left: none;
+    border-top: none;
+    border-bottom: none;
+    border-radius: 0 50% 50% 0;
+    height: 6px;
+    width: 5px;
+}
+.nfc-arc:nth-child(2) { height: 10px; width: 8px; }
+.nfc-arc:nth-child(3) { height: 14px; width: 11px; }
+
+/* Header haut */
+.card-header-pro {
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+/* Numéro de carte */
+.card-number-pro {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.42rem;
+    letter-spacing: 2.5px;
+    display: flex;
+    gap: 14px;
+    white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.8), 0 0 1px rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.92);
+    position: relative;
+    z-index: 2;
+}
+
+/* Footer bas */
+.card-footer-pro {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    position: relative;
+    z-index: 2;
+}
+
+.card-label {
+    font-size: 0.58rem;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 3px;
+}
+
+.card-value {
+    font-size: 0.92rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.92);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+}
+
+.card-footer-right {
+    display: flex;
+    align-items: flex-end;
+    gap: 22px;
+}
+
+/* Logo VISA */
+.card-brand-pro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+.visa-text {
+    font-family: "Arial Black", Impact, sans-serif;
+    font-size: 1.9rem;
+    font-style: italic;
+    font-weight: 900;
+    color: white;
+    line-height: 1;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    letter-spacing: -1px;
+}
+.visa-decorator {
+    height: 2.5px;
+    width: 110%;
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    margin-top: -3px;
+    border-radius: 2px;
+    box-shadow: 0 0 4px rgba(245,158,11,0.5);
+}
+.card-actions-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.btn-card-action {
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-card-edit {
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+}
+
+.btn-card-edit:hover {
+    background: #6366f1;
+    color: white;
+}
+
+.btn-card-delete {
+    background: rgba(244, 63, 94, 0.1);
+    color: #f43f5e;
+}
+
+.btn-card-delete:hover {
+    background: #f43f5e;
+    color: white;
+}
     </style>
 {% endblock %}
 
@@ -111,6 +386,18 @@
         </div>
 
         <div class="btn-action-group d-flex gap-2">
+            {# --- BOUTON RECHARGE STRIPE (Uniquement pour Fiat) --- #}
+            {% if wallet.typeWallet|lower == 'fiat' %}
+                <button class="btn-mini" 
+                        style="background: #e0f7fa; color: #00acc1;" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#rechargeModal" 
+                        onclick="document.getElementById('recharge_wallet_id').value = '{{ wallet.idWallet }}'"
+                        title="Recharge with Stripe">
+                    <i class="fas fa-bolt"></i>
+                </button>
+            {% endif %}
+
             <button class="btn-mini btn-mini-add" data-bs-toggle="modal" data-bs-target="#addCurrencyModal"
                     data-id="{{ wallet.idWallet }}" data-type="{{ wallet.typeWallet|lower }}">
                 <i class="fas fa-plus"></i>
@@ -156,34 +443,46 @@
         <a href="#" class="nav-btn sign-out mt-auto"><i class="fas fa-sign-out-alt me-2"></i> Sign Out</a>
     </aside>
 
-    <main class="main-content">
-        {% for label, messages in app.flashes %}
-            {% for message in messages %}
-                <div class="alert alert-{{ label == 'error' ? 'danger' : 'success' }} alert-dismissible fade show rounded-4 border-0 shadow-sm mb-4">
-                    {{ message }} <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            {% endfor %}
+   <main class="main-content">
+    {# --- SECTION FLASH --- #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            {# On ajoute 'danger' dans la vérification pour que le rouge s'affiche #}
+            <div class="alert alert-{{ (label == 'error' or label == 'danger') ? 'danger' : 'success' }} alert-dismissible fade show rounded-4 border-0 shadow-sm mb-4">
+                <i class="fas {{ (label == 'error' or label == 'danger') ? 'fa-exclamation-circle' : 'fa-check-circle' }} me-2"></i>
+                {{ message }} 
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
         {% endfor %}
+    {% endfor %}
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h2 class="fw-bold mb-1">My Wallets</h2>
-                <p class="text-muted">Monitor and manage your digital assets across multiple platforms.</p>
-            </div>
-            <div class="d-flex gap-2">
-            <a href="{{ path('app_wallet_export_pdf') }}" class="btn btn-outline-dark px-4 py-2 rounded-3 fw-bold shadow-sm">
-        <i class="fas fa-file-pdf me-2"></i> Statement
-    </a>
-                <button class="btn btn-outline-primary px-4 py-2 rounded-3 fw-bold shadow-sm" 
-                        data-bs-toggle="modal" data-bs-target="#transactionModal">
-                    <i class="fas fa-exchange-alt me-2"></i> Transfer
-                </button>
-                
-                <button class="btn btn-primary px-4 py-2 rounded-3 fw-bold" data-bs-toggle="modal" data-bs-target="#addModal" style="background: var(--primary-gradient); border: none;">
-                    <i class="fas fa-plus me-2"></i> New Wallet
-                </button>
-            </div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">My Wallets</h2>
+            <p class="text-muted">Monitor and manage your digital assets across multiple platforms.</p>
         </div>
+        <div class="d-flex gap-2">
+            <a href="{{ path('app_wallet_export_pdf') }}" class="btn btn-outline-dark px-4 py-2 rounded-3 fw-bold shadow-sm">
+                <i class="fas fa-file-pdf me-2"></i> Statement
+            </a>
+            <button class="btn btn-outline-primary px-4 py-2 rounded-3 fw-bold shadow-sm" 
+                    data-bs-toggle="modal" data-bs-target="#cardRealistModal">
+                <i class="fas fa-credit-card me-2"></i> My Card
+            </button>
+            <button class="btn btn-outline-primary px-4 py-2 rounded-3 fw-bold shadow-sm" 
+                    data-bs-toggle="modal" data-bs-target="#transactionModal">
+                <i class="fas fa-exchange-alt me-2"></i> Transfer
+            </button>
+           <button class="btn btn-outline-primary px-4 py-2 rounded-3 fw-bold shadow-sm" 
+        data-bs-toggle="modal" data-bs-target="#convertModal">
+    <i class="fas fa-sync-alt me-2"></i> Convert
+</button>
+            
+            <button class="btn btn-primary px-4 py-2 rounded-3 fw-bold" data-bs-toggle="modal" data-bs-target="#addModal" style="background: var(--primary-gradient); border: none;">
+                <i class="fas fa-plus me-2"></i> New Wallet
+            </button>
+        </div>
+    </div>
 
         <div class="analytics-card">
             <div class="d-flex align-items-center mb-3">
@@ -233,6 +532,296 @@
             </div>
         </div>
     </main>
+</div>
+
+{# ULTRA-REALISTIC DYNAMIC CARD MODAL #}
+<div class="modal fade" id="cardRealistModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 bg-transparent shadow-none">
+            <div class="modal-body p-0">
+
+                {% if creditCard %}
+                    {# CARD DISPLAY #}
+                    <div class="credit-card-champions-pro" id="realistCard">
+                        <div class="card-texture"></div>
+                        <div class="card-holo" id="cardHolo"></div>
+                        <div class="card-bottom-band"></div>
+                        <div class="card-gloss-effect"></div>
+                        <div class="card-edge"></div>
+
+                        <div class="card-header-pro">
+                            <div class="card-chip-pro">
+                                <div class="chip-shine"></div>
+                                <div class="chip-line-v"></div>
+                                <div class="chip-line-h1"></div>
+                                <div class="chip-line-h2"></div>
+                            </div>
+                            <div class="contactless-icon">
+                                <div class="nfc-arcs">
+                                    <div class="nfc-arc"></div>
+                                    <div class="nfc-arc"></div>
+                                    <div class="nfc-arc"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-number-pro">
+                            <span>****</span>
+                            <span>****</span>
+                            <span>****</span>
+                            <span>{{ creditCard.last4Digits }}</span>
+                        </div>
+
+                        <div class="card-footer-pro">
+                            <div class="card-footer-left">
+                                <span class="card-label">Card Holder</span>
+                                <span class="card-value">{{ creditCard.cardHolderName|upper }}</span>
+                            </div>
+                            <div class="card-footer-right">
+                                <div class="expiry-block">
+                                    <span class="card-label">Expires</span>
+                                    <span class="card-value">
+                                        {{ creditCard.expiryMonth|format('%02d') }}/{{ creditCard.expiryYear|slice(-2) }}
+                                    </span>
+                                </div>
+                                <div class="card-brand-pro">
+                                    <span class="visa-text">VISA</span>
+                                    <div class="visa-decorator"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# --- CARD ACTIONS SECTION --- #}
+                    <div class="d-flex justify-content-center gap-3 mt-4">
+                        {# Button to trigger the Edit Pop-up #}
+                        <button type="button" 
+                                class="btn btn-light rounded-pill px-4 fw-bold shadow-sm"
+                                data-bs-toggle="modal" 
+                                data-bs-target="#editCardPopUp">
+                            <i class="fas fa-pen-fancy me-2 text-primary"></i> Edit Card
+                        </button>
+
+                        <form method="post" action="{{ path('app_card_delete', {'id': creditCard.id}) }}" 
+                              onsubmit="return confirm('Are you sure you want to delete this card? This action is permanent.');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ creditCard.id) }}">
+                            <button type="submit" class="btn btn-danger rounded-pill px-4 fw-bold shadow-sm">
+                                <i class="fas fa-trash-alt me-2"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+
+                {% else %}
+                    {# EMPTY STATE MESSAGE #}
+                    <div class="bg-white rounded-4 p-5 text-center shadow-lg">
+                        <div class="mb-4">
+                            <i class="fas fa-credit-card fa-4x text-muted opacity-25"></i>
+                        </div>
+                        <h4 class="fw-bold text-dark">No Active Card</h4>
+                        <p class="text-muted">You haven't linked a physical or virtual card to your account yet.</p>
+                        
+<button type="button" 
+        class="btn btn-primary rounded-pill px-4 py-2 mt-2" 
+        style="background: var(--primary-gradient); border: none;"
+        data-bs-toggle="modal" 
+        data-bs-target="#addCardModal">
+    <i class="fas fa-plus-circle me-2"></i> Add a Card
+</button>
+                    </div>
+                {% endif %}
+
+                <div class="text-center mt-4">
+                    <button type="button"
+                            class="btn btn-link text-white text-decoration-none fw-light"
+                            data-bs-dismiss="modal">
+                        Close View
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{# SECONDARY MODAL: EDIT CARD FORM #}
+<div class="modal fade" id="editCardPopUp" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 pb-0 px-4 pt-4">
+                <h5 class="fw-bold">
+                    <i class="fas fa-edit me-2 text-primary"></i>Update Card Details
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body p-4">
+                {% if creditCard and cardForm is defined %}
+                    {# AJOUT DE 'novalidate' POUR DÉSACTIVER LES BULLES HTML5 #}
+                    {{ form_start(cardForm, {
+                        'action': path('app_card_edit', {'id': creditCard.id}), 
+                        'method': 'POST',
+                        'attr': {'novalidate': 'novalidate'}
+                    }) }}
+                        
+                        <div class="mb-3">
+                            <label class="small fw-bold text-muted mb-1">CARD HOLDER NAME</label>
+                            {{ form_widget(cardForm.cardHolderName) }}
+                            <div class="text-danger small mt-1">
+                                {{ form_errors(cardForm.cardHolderName) }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <label class="small fw-bold text-muted mb-1">EXPIRY MONTH</label>
+                                {{ form_widget(cardForm.expiryMonth) }}
+                                <div class="text-danger extra-small mt-1" style="font-size: 0.75rem;">
+                                    {{ form_errors(cardForm.expiryMonth) }}
+                                </div>
+                            </div>
+
+                            <div class="col-6">
+                                <label class="small fw-bold text-muted mb-1">EXPIRY YEAR</label>
+                                {{ form_widget(cardForm.expiryYear) }}
+                                <div class="text-danger extra-small mt-1" style="font-size: 0.75rem;">
+                                    {{ form_errors(cardForm.expiryYear) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn w-100 py-3 text-white fw-bold rounded-3 mt-4" 
+                                style="background: var(--primary-gradient); border: none;">
+                            Save Changes
+                        </button>
+
+                    {{ form_end(cardForm) }}
+                {% else %}
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary mb-2" role="status"></div>
+                        <p class="text-muted">Loading card information...</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{# THIRD MODAL: ADD NEW CARD #}
+<div class="modal fade" id="addCardModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 pb-0 px-4 pt-4">
+                <h5 class="fw-bold">
+                    <i class="fas fa-plus-circle me-2 text-primary"></i>Register New Card
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body p-4">
+                {# On utilise 'newCardForm' (que vous devrez passer depuis le contrôleur) #}
+                {% if newCardForm is defined %}
+                    {{ form_start(newCardForm, {
+                        'action': path('app_card_new'), 
+                        'method': 'POST',
+                        'attr': {'novalidate': 'novalidate'}
+                    }) }}
+                        
+                        <div class="mb-3">
+                            <label class="small fw-bold text-muted mb-1">CARD NUMBER (16 DIGITS)</label>
+                            {{ form_widget(newCardForm.fullNumber) }}
+                            <div class="text-danger small mt-1">{{ form_errors(newCardForm.fullNumber) }}</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="small fw-bold text-muted mb-1">CARD HOLDER NAME</label>
+                            {{ form_widget(newCardForm.cardHolderName) }}
+                            <div class="text-danger small mt-1">{{ form_errors(newCardForm.cardHolderName) }}</div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <label class="small fw-bold text-muted mb-1">EXPIRY MONTH</label>
+                                {{ form_widget(newCardForm.expiryMonth) }}
+                                <div class="text-danger small mt-1">{{ form_errors(newCardForm.expiryMonth) }}</div>
+                            </div>
+                            <div class="col-6">
+                                <label class="small fw-bold text-muted mb-1">EXPIRY YEAR</label>
+                                {{ form_widget(newCardForm.expiryYear) }}
+                                <div class="text-danger small mt-1">{{ form_errors(newCardForm.expiryYear) }}</div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn w-100 py-3 text-white fw-bold rounded-3 mt-4" 
+                                style="background: var(--primary-gradient); border: none;">
+                            Link Card
+                        </button>
+                    {{ form_end(newCardForm) }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{# MODAL 1: RECHARGE WALLET #}
+<div class="modal fade" id="rechargeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 bg-dark text-white">
+            <form action="{{ path('app_wallet_recharge') }}" method="POST">
+                <div class="modal-header border-0">
+                    <h5 class="fw-bold text-info">Recharge Wallet</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <input type="hidden" name="wallet_id" id="recharge_wallet_id">
+                    
+                    <div class="mb-3">
+                        <label class="small fw-bold text-muted mb-1">SELECT CURRENCY</label>
+                        <select name="currency_id" class="form-select bg-secondary text-white border-0">
+                            {% for currency in all_available_currencies %}
+                                {% if currency.typeCurrency == 'fiat' %}
+                                    <option value="{{ currency.id }}">{{ currency.nom }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="small fw-bold text-muted mb-1">AMOUNT</label>
+                        <input type="number" name="amount" step="0.01" class="form-control bg-secondary text-white border-0" placeholder="0.00" required>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="submit" class="btn btn-info w-100 py-2 fw-bold">Send Verification Code</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{# MODAL 2: SECURITY VERIFICATION (Le code de mail) #}
+<div class="modal fade" id="verifyCodeModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 bg-dark text-white">
+            <form action="{{ path('app_wallet_recharge_confirm') }}" method="POST">
+                <div class="modal-header border-0">
+                    <h5 class="fw-bold text-warning">Security Check</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-shield-alt fa-3x text-warning mb-3"></i>
+                        <p class="text-muted">A 6-digit verification code has been sent to your email. Please enter it below to authorize the transaction.</p>
+                    </div>
+                    <input type="text" name="verification_code" 
+                           class="form-control form-control-lg bg-secondary text-white border-0 text-center fw-bold" 
+                           placeholder="000000" maxlength="6" required 
+                           style="letter-spacing: 8px; font-size: 1.8rem;">
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="submit" class="btn btn-warning w-100 py-2 fw-bold text-dark">Verify & Confirm Payment</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 {# TRANSACTION MODAL #}
@@ -293,7 +882,7 @@
     </div>
 </div>
 
-{# MODALE AJOUT WALLET #}
+{# Section de la Modale d'ajout de Wallet #}
 <div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg rounded-4">
@@ -302,13 +891,18 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4">
-                {{ form_start(form) }}
+                {# CORRECTION CI-DESSOUS : utiliser walletForm #}
+                {{ form_start(walletForm) }}
                     <label class="small fw-bold text-muted mb-2">ACCOUNT TYPE</label>
-                    {{ form_widget(form.typeWallet, {'attr': {'class': 'form-control-custom'}}) }}
+                    {{ form_widget(walletForm.typeWallet, {'attr': {'class': 'form-control-custom'}}) }}
+                    
                     <label class="small fw-bold text-muted mb-2">INITIAL STATUS</label>
-                    {{ form_widget(form.statut, {'attr': {'class': 'form-control-custom'}}) }}
-                    <button type="submit" class="btn w-100 py-3 mt-3 text-white fw-bold rounded-3" style="background: var(--primary-gradient); border: none;">Create Account</button>
-                {{ form_end(form) }}
+                    {{ form_widget(walletForm.statut, {'attr': {'class': 'form-control-custom'}}) }}
+                    
+                    <button type="submit" class="btn w-100 py-3 mt-3 text-white fw-bold rounded-3" style="background: var(--primary-gradient); border: none;">
+                        Create Account
+                    </button>
+                {{ form_end(walletForm) }}
             </div>
         </div>
     </div>
@@ -358,7 +952,7 @@
     </div>
 </div>
 
-{# MODALE HISTORY (AJOUTÉE) #}
+{# MODALE HISTORY #}
 <div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg rounded-4">
@@ -390,159 +984,306 @@
     </div>
 </div>
 
+
+<div class="modal fade" id="convertModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <form action="{{ path('app_wallet_convert') }}" method="POST">
+                <div class="modal-header border-0 px-4 pt-4">
+                    <h5 class="fw-bold text-primary"><i class="fas fa-coins me-2"></i> Asset Exchange</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body p-4">
+                    <div id="step1">
+                        <div class="row g-2 mb-3">
+                            <div class="col-5">
+                                <label class="small fw-bold text-muted">FROM</label>
+                                <select id="api_from" class="form-select border-2">
+                                    {% for currency in all_available_currencies %}
+                                        <option value="{{ currency.nom }}">{{ currency.nom }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-2 text-center mt-4"><i class="fas fa-random text-muted"></i></div>
+                            <div class="col-5">
+                                <label class="small fw-bold text-muted">TO</label>
+                                <select id="api_to" class="form-select border-2">
+                                    {% for currency in all_available_currencies %}
+                                        <option value="{{ currency.nom }}">{{ currency.nom }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="small fw-bold text-muted">AMOUNT</label>
+                            <input type="number" id="api_amount" name="amount_from" class="form-control border-2" placeholder="0.00">
+                        </div>
+                        
+                        <div id="result_preview" class="p-3 rounded-3 text-center mb-3 d-none" style="background: #f8f9fa; border: 2px dashed #0d6efd;">
+                            <span class="text-muted small">You will get approximately:</span>
+                            <h3 id="preview_val" class="fw-bold text-primary mb-0">0.00</h3>
+                        </div>
+
+                        <button type="button" id="btn_calc" class="btn btn-primary w-100 py-2 fw-bold rounded-3">Get Live Rate</button>
+                    </div>
+
+                    <div id="step2" class="d-none">
+                        <div class="mb-3">
+                            <label class="small fw-bold text-muted">SOURCE WALLET (RIB)</label>
+                            <select name="wallet_source" class="form-select border-2">
+                                {% for wallet in wallets %}
+                                    <option value="{{ wallet.idWallet }}">{{ wallet.rib }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="small fw-bold text-muted">DESTINATION WALLET (RIB)</label>
+                            <select name="wallet_destination" class="form-select border-2">
+                                {% for wallet in wallets %}
+                                    <option value="{{ wallet.idWallet }}">{{ wallet.rib }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <input type="hidden" name="currency_from_name" id="hidden_from">
+                        <input type="hidden" name="currency_to_name" id="hidden_to">
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0 pb-4 px-4">
+                    <button type="submit" id="btn_final" class="btn w-100 py-3 text-white fw-bold rounded-3 d-none" 
+                            style="background: var(--primary-gradient); border:none;">
+                        Execute & Seal Transaction
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('btn_calc').addEventListener('click', function() {
+    const from = document.getElementById('api_from').value;
+    const to = document.getElementById('api_to').value;
+    const amount = document.getElementById('api_amount').value;
+    const btn = this;
+
+    if(!amount || amount <= 0) return alert("Please enter a valid amount.");
+
+    const originalText = btn.innerText;
+    btn.innerText = "Fetching live rate...";
+    btn.disabled = true;
+
+    const url = "{{ path('app_wallet_get_rate') }}?from=" + from + "&to=" + to + "&amount=" + amount;
+
+    fetch(url)
+        .then(res => {
+            if (!res.ok) throw new Error('Service unavailable');
+            return res.json();
+        })
+        .then(data => {
+            if (data.error) {
+                alert("Error: " + data.error);
+                btn.innerText = originalText;
+                btn.disabled = false;
+            } else {
+                document.getElementById('preview_val').innerText = data.result.toFixed(4) + " " + to;
+                document.getElementById('result_preview').classList.remove('d-none');
+                
+                btn.innerText = "Next: Select Wallets";
+                btn.disabled = false;
+                btn.classList.replace('btn-primary', 'btn-success');
+                
+                // On attache l'événement pour passer à l'étape 2
+                btn.onclick = function() {
+                    document.getElementById('step1').classList.add('d-none');
+                    document.getElementById('step2').classList.remove('d-none');
+                    document.getElementById('btn_final').classList.remove('d-none');
+                    document.getElementById('hidden_from').value = from;
+                    document.getElementById('hidden_to').value = to;
+                };
+            }
+        })
+        .catch(err => {
+            alert("Connection error. Please try again.");
+            btn.innerText = originalText;
+            btn.disabled = false;
+        });
+});
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    // --- GESTION DU GRAPHIQUE AVEC DEBUG ---
     document.addEventListener('DOMContentLoaded', function() {
+        // --- 1. LOGIQUE DE VÉRIFICATION PAR MAIL (POPUP AUTO) ---
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('verify')) {
+            const verifyModalElement = document.getElementById('verifyCodeModal');
+            if (verifyModalElement) {
+                const verifyModal = new bootstrap.Modal(verifyModalElement);
+                verifyModal.show();
+            }
+        }
+
+        // --- 2. GESTION DU GRAPHIQUE ---
         const canvas = document.getElementById('walletChart');
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        
-        fetch('{{ path('app_wallet_chart_data') }}')
-            .then(response => {
-                console.log("Status HTTP :", response.status);
-                return response.json();
-            })
-            .then(data => {
-                console.log("Données reçues du serveur :", data);
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            
+            fetch('{{ path('app_wallet_chart_data') }}')
+                .then(response => response.json())
+                .then(data => {
+                    if (!data || data.length === 0) {
+                        const legendDiv = document.getElementById('chart-legend');
+                        if (legendDiv) legendDiv.innerHTML = '<span class="text-muted small italic">No balance data available yet.</span>';
+                        return;
+                    }
 
-                if (!data || data.length === 0) {
-                    console.warn("Aucune donnée disponible pour le graphique.");
-                    document.getElementById('chart-legend').innerHTML = '<span class="text-muted small italic">No balance data available yet.</span>';
-                    return;
-                }
-
-                const labels = data.map(item => item.name);
-                const values = data.map(item => item.total);
-                
-                new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            data: values,
-                            backgroundColor: [
-                                '#6366f1', '#10b981', '#f59e0b', '#3b82f6', '#f43f5e', '#8b5cf6'
-                            ],
-                            borderWidth: 0,
-                            hoverOffset: 10
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false }
+                    const labels = data.map(item => item.name);
+                    const values = data.map(item => item.total);
+                    
+                    new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                data: values,
+                                backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#3b82f6', '#f43f5e', '#8b5cf6'],
+                                borderWidth: 0,
+                                hoverOffset: 10
+                            }]
                         },
-                        cutout: '70%'
+                        options: {
+                            responsive: true, maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            cutout: '70%'
+                        }
+                    });
+
+                    const legendDiv = document.getElementById('chart-legend');
+                    if (legendDiv) {
+                        legendDiv.innerHTML = ''; 
+                        const colors = ['#6366f1', '#10b981', '#f59e0b', '#3b82f6', '#f43f5e', '#8b5cf6'];
+                        
+                        data.forEach((item, index) => {
+                            const color = colors[index % colors.length];
+                            legendDiv.innerHTML += `
+                                <div class="d-flex align-items-center">
+                                    <div style="width: 12px; height: 12px; background: ${color}; border-radius: 3px; margin-right: 8px;"></div>
+                                    <span class="small fw-bold">${item.name}</span>
+                                    <span class="small text-muted ms-2">${parseFloat(item.total).toFixed(2)}</span>
+                                </div>
+                            `;
+                        });
                     }
                 });
+        }
 
-                const legendDiv = document.getElementById('chart-legend');
-                legendDiv.innerHTML = ''; 
-                const colors = ['#6366f1', '#10b981', '#f59e0b', '#3b82f6', '#f43f5e', '#8b5cf6'];
+        // --- 3. LOGIQUE RECHARGE MODAL (SET WALLET ID) ---
+        const rechargeModal = document.getElementById('rechargeModal');
+        if (rechargeModal) {
+            rechargeModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const walletId = button.getAttribute('data-id');
+                const inputId = document.getElementById('recharge_wallet_id');
+                if (inputId) inputId.value = walletId;
+            });
+        }
+
+        // --- 4. LOGIQUE HISTORY MODAL ---
+        const historyModal = document.getElementById('historyModal');
+        if (historyModal) {
+            historyModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const walletId = button.getAttribute('data-id');
+                const rib = button.getAttribute('data-rib');
+                const tableBody = document.getElementById('history-table-body');
+                const loader = document.getElementById('history-loader');
+                const ribTitle = document.getElementById('history-rib-title');
+
+                if (ribTitle) ribTitle.innerText = "Wallet: " + rib;
+                if (tableBody) tableBody.innerHTML = '';
+                if (loader) loader.classList.remove('d-none');
+
+                fetch(`/wallet/${walletId}/history-json`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (loader) loader.classList.add('d-none');
+                        if (!tableBody) return;
+
+                        if (data.length === 0) {
+                            tableBody.innerHTML = '<tr><td colspan="4" class="text-center py-3">No transactions found.</td></tr>';
+                            return;
+                        }
+                        data.forEach(tx => {
+                            const isOut = tx.direction === 'out'; 
+                            const amountClass = isOut ? 'text-danger' : 'text-success';
+                            const prefix = isOut ? '-' : '+';
+
+                            tableBody.innerHTML += `
+                                <tr>
+                                    <td class="small">${tx.date}</td>
+                                    <td><span class="badge bg-light text-dark text-uppercase" style="font-size:0.7rem;">${tx.type}</span></td>
+                                    <td class="small text-muted">${tx.counterparty}</td>
+                                    <td class="text-end fw-bold ${amountClass}">${prefix}${tx.amount} ${tx.currency}</td>
+                                </tr>
+                            `;
+                        });
+                    })
+                    .catch(() => {
+                        if (loader) loader.classList.add('d-none');
+                        if (tableBody) tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading history.</td></tr>';
+                    });
+            });
+        }
+
+        // --- 5. LOGIQUE DES AUTRES MODALES (Add Currency / Edit) ---
+        const addCurrencyModal = document.getElementById('addCurrencyModal');
+        if (addCurrencyModal) {
+            addCurrencyModal.addEventListener('show.bs.modal', function (event) {
+                const btn = event.relatedTarget;
+                const walletId = btn.getAttribute('data-id');
+                const walletType = btn.getAttribute('data-type'); 
+                const form = document.getElementById('form-add-currency');
+                if (form) form.action = '/wallet/' + walletId + '/add-currency';
                 
-                data.forEach((item, index) => {
-                    const color = colors[index % colors.length];
-                    legendDiv.innerHTML += `
-                        <div class="d-flex align-items-center">
-                            <div style="width: 12px; height: 12px; background: ${color}; border-radius: 3px; margin-right: 8px;"></div>
-                            <span class="small fw-bold">${item.name}</span>
-                            <span class="small text-muted ms-2">${parseFloat(item.total).toFixed(2)}</span>
-                        </div>
-                    `;
-                });
-            })
-            .catch(err => console.error("Erreur Fetch Chart :", err));
-    });
-
-    // --- LOGIQUE HISTORY MODAL (AJOUTÉE) ---
-const historyModal = document.getElementById('historyModal');
-if (historyModal) {
-    historyModal.addEventListener('show.bs.modal', function (event) {
-        const button = event.relatedTarget;
-        const walletId = button.getAttribute('data-id');
-        const rib = button.getAttribute('data-rib');
-        
-        const tableBody = document.getElementById('history-table-body');
-        const loader = document.getElementById('history-loader');
-        const ribTitle = document.getElementById('history-rib-title');
-
-        ribTitle.innerText = "Wallet: " + rib;
-        tableBody.innerHTML = '';
-        loader.classList.remove('d-none');
-
-        fetch(`/wallet/${walletId}/history-json`)
-            .then(response => response.json())
-            .then(data => {
-                loader.classList.add('d-none');
-                if (data.length === 0) {
-                    tableBody.innerHTML = '<tr><td colspan="4" class="text-center py-3">No transactions found.</td></tr>';
-                    return;
+                const select = document.getElementById('select-currency');
+                if (select) {
+                    [...select.options].forEach(opt => {
+                        const cType = opt.getAttribute('data-type');
+                        const isTrading = opt.getAttribute('data-trading');
+                        let visible = (walletType === 'trading') ? (cType === 'crypto' && isTrading === 'true') : (cType === walletType);
+                        opt.style.display = visible ? 'block' : 'none';
+                        opt.disabled = !visible;
+                    });
+                    const first = [...select.options].find(o => !o.disabled);
+                    if (first) { select.value = first.value; updateNom(select); }
                 }
-                data.forEach(tx => {
-                    // --- MODIFICATION ICI ---
-                    // On utilise 'direction' envoyé par le contrôleur PHP
-                    const isOut = tx.direction === 'out'; 
-                    const amountClass = isOut ? 'text-danger' : 'text-success';
-                    const prefix = isOut ? '-' : '+';
-                    // ------------------------
-
-                    tableBody.innerHTML += `
-                        <tr>
-                            <td class="small">${tx.date}</td>
-                            <td><span class="badge bg-light text-dark text-uppercase" style="font-size:0.7rem;">${tx.type}</span></td>
-                            <td class="small text-muted">${tx.counterparty}</td>
-                            <td class="text-end fw-bold ${amountClass}">${prefix}${tx.amount} ${tx.currency}</td>
-                        </tr>
-                    `;
-                });
-            })
-            .catch(() => {
-                loader.classList.add('d-none');
-                tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading history.</td></tr>';
             });
+        }
+
+        const editModal = document.getElementById('editModal');
+        if (editModal) {
+            editModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const id = button.getAttribute('data-id');
+                const typeInput = document.getElementById('modal-type');
+                const statutInput = document.getElementById('modal-statut');
+                const form = document.getElementById('edit-form');
+                
+                if (typeInput) typeInput.value = button.getAttribute('data-type').toUpperCase();
+                if (statutInput) statutInput.value = button.getAttribute('data-statut');
+                if (form) form.action = '/wallet/' + id + '/edit';
+            });
+        }
     });
-}
-
-    // --- LOGIQUE DES AUTRES MODALES ---
-    const addCurrencyModal = document.getElementById('addCurrencyModal');
-    if (addCurrencyModal) {
-        addCurrencyModal.addEventListener('show.bs.modal', function (event) {
-            const btn = event.relatedTarget;
-            const walletId = btn.getAttribute('data-id');
-            const walletType = btn.getAttribute('data-type'); 
-            document.getElementById('form-add-currency').action = '/wallet/' + walletId + '/add-currency';
-            const select = document.getElementById('select-currency');
-            [...select.options].forEach(opt => {
-                const cType = opt.getAttribute('data-type');
-                const isTrading = opt.getAttribute('data-trading');
-                let visible = (walletType === 'trading') ? (cType === 'crypto' && isTrading === 'true') : (cType === walletType);
-                opt.style.display = visible ? 'block' : 'none';
-                opt.disabled = !visible;
-            });
-            const first = [...select.options].find(o => !o.disabled);
-            if (first) { select.value = first.value; updateNom(select); }
-        });
-    }
 
     function updateNom(select) {
         const selected = select.options[select.selectedIndex];
         const input = document.getElementById('hidden-nom-currency');
         if (input) input.value = selected ? selected.getAttribute('data-nom') : '';
-    }
-
-    const editModal = document.getElementById('editModal');
-    if (editModal) {
-        editModal.addEventListener('show.bs.modal', function (event) {
-            const button = event.relatedTarget;
-            const id = button.getAttribute('data-id');
-            document.getElementById('modal-type').value = button.getAttribute('data-type').toUpperCase();
-            document.getElementById('modal-statut').value = button.getAttribute('data-statut');
-            document.getElementById('edit-form').action = '/wallet/' + id + '/edit';
-        });
     }
 </script>
 {% endblock %}

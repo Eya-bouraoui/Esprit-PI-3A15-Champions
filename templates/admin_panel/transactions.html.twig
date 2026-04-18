@@ -16,17 +16,14 @@
 
     <div id="wrapper">
 
-               <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
-            <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ path('app_admin_panel') }}">
                 <div class="sidebar-brand-text mx-3">NexVault Admin panel</div>
             </a>
 
             <hr class="sidebar-divider my-0">
 
-            <!-- Dashboard -->
             <li class="nav-item active">
                 <a class="nav-link" href="{{ path('app_admin_panel') }}">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
@@ -37,7 +34,6 @@
             <hr class="sidebar-divider">
             <div class="sidebar-heading">User Management</div>
 
-            <!-- Pending Approvals -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ path('app_admin_pending_users') }}">
                     <i class="fas fa-fw fa-user-clock"></i>
@@ -45,7 +41,6 @@
                 </a>
             </li>
 
-            <!-- All Users -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ path('app_admin_users_list') }}">
                     <i class="fas fa-fw fa-users"></i>
@@ -56,7 +51,6 @@
             <hr class="sidebar-divider">
             <div class="sidebar-heading">Trading</div>
 
-            <!-- Assets -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ path('app_backoffice_asset_index') }}">
                     <i class="fas fa-fw fa-coins"></i>
@@ -67,17 +61,16 @@
             <hr class="sidebar-divider">
             <div class="sidebar-heading">Interface</div>
 
-            <!-- Assets -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ path('app_back_product_index') }}">
-                    <i class="fas fa-fw fa-coins"></i>
+                    <i class="fas fa-fw fa-box"></i>
                     <span>Produits</span>
                 </a>
             </li>
 
-             <li class="nav-item">
+            <li class="nav-item">
                 <a class="nav-link" href="{{ path('app_back_order_index') }}">
-                    <i class="fas fa-fw fa-coins"></i>
+                    <i class="fas fa-fw fa-shopping-cart"></i>
                     <span>Commandes</span>
                 </a>
             </li>
@@ -87,8 +80,8 @@
                 
             <li class="nav-item">
                 <a class="nav-link" href="{{ path('app_admin_transactions') }}">
-                    <i class="fas fa-fw fa-coins"></i>
-                    <span>transactions</span>
+                    <i class="fas fa-fw fa-exchange-alt"></i>
+                    <span>Transactions</span>
                 </a>
             </li>
 
@@ -115,8 +108,9 @@
                     <span>Certificats</span>
                 </a>
             </li>
+
             <hr class="sidebar-divider">
-            <!-- Logout -->
+
             <li class="nav-item">
                 <a class="nav-link" href="{{ path('app_logout') }}">
                     <i class="fas fa-fw fa-sign-out-alt"></i>
@@ -124,24 +118,60 @@
                 </a>
             </li>
 
-            
-
             <hr class="sidebar-divider d-none d-md-block">
 
-            <!-- Sidebar Toggler -->
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
-
         </ul>
-        <!-- End of Sidebar -->
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
+
                     <ul class="navbar-nav ml-auto">
+                        
+                        <li class="nav-item dropdown no-arrow mx-1">
+                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-bell fa-fw"></i>
+                                {% if unreadNotificationsCount > 0 %}
+                                    <span class="badge badge-danger badge-counter">
+                                        {{ unreadNotificationsCount > 9 ? '9+' : unreadNotificationsCount }}
+                                    </span>
+                                {% endif %}
+                            </a>
+                            
+                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
+                                <h6 class="dropdown-header">Security Alerts Center</h6>
+                                
+                                {% for n in notifications %}
+                                    <a class="dropdown-item d-flex align-items-center" href="#">
+                                        <div class="mr-3">
+                                            {% if n.typeNotification == 'DELETE_DETECTED' %}
+                                                <div class="icon-circle bg-danger"><i class="fas fa-trash text-white"></i></div>
+                                            {% elseif n.typeNotification == 'UPDATE_DETECTED' %}
+                                                <div class="icon-circle bg-warning"><i class="fas fa-exclamation-triangle text-white"></i></div>
+                                            {% else %}
+                                                <div class="icon-circle bg-primary"><i class="fas fa-shield-alt text-white"></i></div>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <div class="small text-gray-500">{{ n.getCreatedAt()|date('d M, H:i') }}</div>
+                                            <span class="font-weight-bold" style="white-space: pre-wrap;">{{ n.getMessage()|nl2br }}</span>
+                                        </div>
+                                    </a>
+                                {% else %}
+                                    <a class="dropdown-item text-center small text-gray-500" href="#">No new alerts</a>
+                                {% endfor %}
+                                
+                                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Notifications</a>
+                            </div>
+                        </li>
+
+                        <div class="topbar-divider d-none d-sm-block"></div>
+
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">
@@ -170,7 +200,6 @@
                             <h6 class="m-0 font-weight-bold text-primary">Transactions Data Table</h6>
                         </div>
                         <div class="card-body">
-                            
                             <div class="row mb-4">
                                 <div class="col-md-12">
                                     <form id="filterForm" method="get" action="{{ path('app_admin_transactions') }}" class="form-inline bg-light p-3 rounded">
@@ -194,6 +223,7 @@
                                     </form>
                                 </div>
                             </div>
+
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
@@ -218,7 +248,6 @@
                                                         <span class="text-muted">Unknown</span>
                                                     {% endif %}
                                                 </td>
-
                                                 <td>
                                                     {% if t.type|upper == 'RECHARGE' and t.creditCard %}
                                                         <i class="fas fa-credit-card"></i> **** {{ t.creditCard.last4Digits }}
@@ -226,14 +255,11 @@
                                                         {{ t.walletSource ? t.walletSource.rib : 'N/A' }}
                                                     {% endif %}
                                                 </td>
-
                                                 <td>{{ t.walletDestination ? t.walletDestination.rib : 'N/A' }}</td>
-                                                
                                                 <td>
                                                     <strong>{{ t.montant|number_format(2, '.', ',') }}</strong> 
                                                     <small>{{ t.currency ? t.currency.code : '' }}</small>
                                                 </td>
-                                                
                                                 <td>
                                                     {% set badgeColor = 'secondary' %}
                                                     {% if t.type|upper == 'RECHARGE' %}{% set badgeColor = 'success' %}
@@ -244,13 +270,10 @@
                                                     {% elseif t.type|upper == 'CONVERSION' %}{% set badgeColor = 'warning' %}{% endif %}
                                                     <span class="badge badge-{{ badgeColor }} text-uppercase">{{ t.type }}</span>
                                                 </td>
-                                                
                                                 <td>{{ t.dateTransaction ? t.dateTransaction|date('M d, Y H:i') : 'N/A' }}</td>
                                             </tr>
                                         {% else %}
-                                            <tr>
-                                                <td colspan="6" class="text-center">No transactions found.</td>
-                                            </tr>
+                                            <tr><td colspan="6" class="text-center">No transactions found.</td></tr>
                                         {% endfor %}
                                     </tbody>
                                 </table>
@@ -277,7 +300,6 @@
 
     <script>
     $(document).ready(function() {
-        // Fonction pour mettre à jour le tableau dynamiquement
         function filterTransactions() {
             const userName = $('#user_name').val();
             const type = $('#type').val();
@@ -286,30 +308,16 @@
             $.ajax({
                 url: url,
                 type: 'GET',
-                data: {
-                    user_name: userName,
-                    type: type
-                },
+                data: { user_name: userName, type: type },
                 success: function(response) {
-                    // On extrait uniquement le contenu du tbody de la réponse HTML
                     const newTableBody = $(response).find('#dataTable tbody').html();
                     $('#dataTable tbody').html(newTableBody);
                 },
-                error: function() {
-                    console.error("Erreur lors du filtrage des transactions.");
-                }
+                error: function() { console.error("Erreur filtrage."); }
             });
         }
-
-        // Événement : Frappe au clavier (dynamique dès la première lettre)
-        $('#user_name').on('keyup', function() {
-            filterTransactions();
-        });
-
-        // Événement : Changement de type dans le select
-        $('#type').on('change', function() {
-            filterTransactions();
-        });
+        $('#user_name').on('keyup', filterTransactions);
+        $('#type').on('change', filterTransactions);
     });
     </script>
 </body>
