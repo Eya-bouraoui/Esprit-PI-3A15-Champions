@@ -277,5 +277,5 @@ This project is proprietary and developed for academic purposes at **ESPRIT – 
 ---
 
 <p align="center">
-  Made with ❤️ by <strong>Team 3A15 – Champions</strong> · ESPRIT 2024/2025
+  Made with ❤️ by <strong>Team 3A15 – Champions</strong> · ESPRIT 2025/2026
 </p>
